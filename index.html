@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0045)file:///C:/Users/enter/Downloads/index_4.html -->
+<html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>Arıza Takip</title>
 <style>
@@ -196,7 +196,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
 .catalog-section-label{font-size:11.5px;font-weight:700;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 4px;}
 .link-btn{background:none;border:none;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;padding:0;margin-bottom:10px;text-align:left;}
 </style>
-</head>
+<script src="./Arıza Takip_files/supabase-js@2"></script></head>
 <body>
 <div id="app">
 
@@ -205,10 +205,46 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
     <div class="login-card">
       <div class="login-title">Arıza Takip</div>
       <div class="login-sub">GİRİŞ · PROFİLİNİZİ SEÇİN</div>
-      <div class="profile-grid" id="profileGrid"></div>
-      <div class="pin-row" id="pinRow"><input type="password" inputmode="numeric" maxlength="4" id="pinInput" placeholder="••••"></div>
+      <div class="profile-grid" id="profileGrid">
+    <div class="profile-btn tamirci" data-id="u1">
+      <div class="avatar">🔧</div>
+      Tamirci
+      <span class="role-tag">Tamirci</span>
+    </div>
+  
+    <div class="profile-btn personel" data-id="u2">
+      <div class="avatar">👤</div>
+      Personel 2
+      <span class="role-tag">Personel</span>
+    </div>
+  
+    <div class="profile-btn personel" data-id="u3">
+      <div class="avatar">👤</div>
+      Personel 3
+      <span class="role-tag">Personel</span>
+    </div>
+  
+    <div class="profile-btn personel selected" data-id="u4">
+      <div class="avatar">👤</div>
+      Personel 4
+      <span class="role-tag">Personel</span>
+    </div>
+  
+    <div class="profile-btn personel" data-id="u5">
+      <div class="avatar">👤</div>
+      Personel 5
+      <span class="role-tag">Personel</span>
+    </div>
+  
+    <div class="profile-btn admin" data-id="admin">
+      <div class="avatar">🛡️</div>
+      Yönetici
+      <span class="role-tag">Yönetici</span>
+    </div>
+  </div>
+      <div class="pin-row show" id="pinRow"><input type="password" inputmode="numeric" maxlength="4" id="pinInput" placeholder="••••"></div>
       <div class="login-error" id="loginError"></div>
-      <button class="btn-primary" id="loginBtn" style="display:none;">Giriş Yap</button>
+      <button class="btn-primary" id="loginBtn" style="display: block;">Giriş Yap</button>
     </div>
   </div>
 
@@ -282,7 +318,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           Yapılan işleri ekipman adına göre gruplanmış, fotoğraflar dahil tek bir PDF olarak indirin.
         </div>
         <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:10px;">
-          <input type="checkbox" id="onlyClosedCheck" checked style="width:16px;height:16px;">
+          <input type="checkbox" id="onlyClosedCheck" checked="" style="width:16px;height:16px;">
           Sadece kapatılan (tamamlanan) kayıtlar
         </label>
         <button class="btn-primary" id="exportPdfBtn">📥 PDF Raporu İndir</button>
@@ -308,10 +344,10 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         <div class="field">
           <label>Fotoğraf</label>
           <label class="photo-add-btn" for="f_foto">📷 Fotoğraf Ekle</label>
-          <input type="file" id="f_foto" accept="image/*" multiple style="display:none;">
+          <input type="file" id="f_foto" accept="image/*" multiple="" style="display:none;">
           <div class="photo-strip" id="newPhotoStrip"></div>
         </div>
-        <div class="field"><label>Bildiren Kişi</label><input type="text" id="f_bildiren" disabled></div>
+        <div class="field"><label>Bildiren Kişi</label><input type="text" id="f_bildiren" disabled=""></div>
         <div class="field">
           <label>Öncelik</label>
           <div class="priority-picker" id="priorityPicker">
@@ -345,10 +381,10 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         <div class="field">
           <label>Fotoğraf</label>
           <label class="photo-add-btn" for="f_foto_cozum">📷 Fotoğraf Ekle</label>
-          <input type="file" id="f_foto_cozum" accept="image/*" multiple style="display:none;">
+          <input type="file" id="f_foto_cozum" accept="image/*" multiple="" style="display:none;">
           <div class="photo-strip" id="closePhotoStrip"></div>
         </div>
-        <div class="field"><label>Kapatan Kişi</label><input type="text" id="f_kapatan" disabled></div>
+        <div class="field"><label>Kapatan Kişi</label><input type="text" id="f_kapatan" disabled=""></div>
         <button class="btn-danger" id="submitClose">Arızayı Giderildi Olarak Kapat</button>
       </div>
     </div>
@@ -384,7 +420,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Yeni Ürün Ekle</div><button class="sheet-close" data-close="yeniUrunOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Bölüm</label><input type="text" id="f_urun_bolum" disabled></div>
+        <div class="field"><label>Bölüm</label><input type="text" id="f_urun_bolum" disabled=""></div>
         <div class="field"><label>Ürün / Ekipman Adı *</label><input type="text" id="f_urun_ad" placeholder="örn. CNC Torna Tezgahı #3"></div>
         <div class="field">
           <label>Fotoğraf</label>
@@ -407,10 +443,9 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src=""></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_4.html"></div>
 </div>
 
-<script>
 <script>
 const SUPABASE_URL = 'https://xgvtzzgghvifooirocpw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_PrU0_QJYpnkAzDHW355oUQ_JvUg4G9s';
@@ -1293,5 +1328,6 @@ document.getElementById('exportPdfBtn').addEventListener('click', ()=>{
   }
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
