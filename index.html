@@ -34,7 +34,9 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
 .profile-avatar-img{width:34px;height:34px;border-radius:50%;object-fit:cover;margin:0 auto 4px;display:block;border:1px solid var(--border);}
 .login-card{max-height:88vh;overflow-y:auto;}
 .profile-btn.admin{grid-column:1/-1;border-color:var(--gold);background:var(--gold-soft);color:#7A5C06;}
+.profile-btn.mudur{grid-column:1/-1;border-color:#7B4FA0;background:#F0E9F7;color:#5B3A78;}
 .profile-btn.tamirci{border-color:var(--teal2);background:var(--teal2-soft);color:var(--teal2);}
+.profile-btn.sofor{border-color:var(--low);background:var(--low-soft);color:var(--low);}
 .profile-btn.selected{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-dark);}
 .pin-row{display:none;margin-top:4px;}
 .pin-row.show{display:block;}
@@ -680,15 +682,19 @@ function formatDate(iso){
   return d.toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' + d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
 }
 function priorityLabel(p){ return {dusuk:'Düşük',orta:'Orta',yuksek:'Yüksek',acil:'Acil'}[p] || p; }
-function roleLabel(r){ return {admin:'Yönetici',tamirci:'Tamirci',personel:'Personel'}[r] || r; }
+function roleLabel(r){ return {admin:'Yönetici',mudur:'Müdür',tamirci:'Tamirci',sofor:'Şoför',personel:'Personel'}[r] || r; }
 
 function defaultUsers(){
   const list = [
     { id:'u1', name:'Tamirci', role:'tamirci', pin:'1111', foto:null },
-    { id:'admin', name:'Yönetici', role:'admin', pin:'9999', foto:null }
+    { id:'admin', name:'Yönetici', role:'admin', pin:'9999', foto:null },
+    { id:'mudur1', name:'Müdür', role:'mudur', pin:'8888', foto:null }
   ];
-  for(let i=2;i<=26;i++){
+  for(let i=2;i<=11;i++){
     list.push({ id:'u'+i, name:'Personel '+i, role:'personel', pin: String(1000+i).padStart(4,'0'), foto:null });
+  }
+  for(let i=1;i<=10;i++){
+    list.push({ id:'s'+i, name:'Şoför '+i, role:'sofor', pin: String(2000+i).padStart(4,'0'), foto:null });
   }
   return { list };
 }
@@ -743,7 +749,7 @@ function renderProfileGrid(){
     <div class="profile-btn ${u.role}" data-id="${u.id}">
       ${u.foto
         ? `<img src="${u.foto}" class="profile-avatar-img" alt="">`
-        : `<div class="avatar">${u.role==='admin' ? '🛡️' : u.role==='tamirci' ? '🔧' : '👤'}</div>`}
+        : `<div class="avatar">${u.role==='admin' ? '🛡️' : u.role==='mudur' ? '👔' : u.role==='tamirci' ? '🔧' : u.role==='sofor' ? '🚗' : '👤'}</div>`}
       ${escapeHtml(u.name)}
       <span class="role-tag">${roleLabel(u.role)}</span>
     </div>
@@ -777,9 +783,11 @@ async function attemptLogin(){
 
   if(currentUser.role === 'admin'){
     document.getElementById('adminTabBtn').style.display = 'block';
+  }
+  if(currentUser.role === 'admin' || currentUser.role === 'mudur' || currentUser.role === 'sofor'){
     document.getElementById('araclarTabBtn').style.display = 'block';
   }
-  if(currentUser.role === 'admin' || currentUser.role === 'tamirci'){
+  if(currentUser.role === 'admin' || currentUser.role === 'mudur' || currentUser.role === 'tamirci'){
     document.getElementById('satinAlmaTabBtn').style.display = 'block';
     document.getElementById('bellBtn').style.display = 'flex';
     seenNotifIds = new Set(DATA.notifications.map(n=>n.id));
@@ -928,7 +936,7 @@ function renderList(){
   listEl.querySelectorAll('.ticket').forEach(el=>el.addEventListener('click', ()=>openDetail(parseInt(el.dataset.id))));
 }
 
-function canClose(){ return currentUser && (currentUser.role === 'tamirci' || currentUser.role === 'admin'); }
+function canClose(){ return currentUser && (currentUser.role === 'tamirci' || currentUser.role === 'admin' || currentUser.role === 'mudur'); }
 
 function openDetail(id){
   activeTicketId = id;
@@ -1161,7 +1169,7 @@ function renderUrunler(){
     return;
   }
   const isAdmin = currentUser && currentUser.role === 'admin';
-  const canStock = currentUser && (currentUser.role === 'admin' || currentUser.role === 'tamirci');
+  const canStock = currentUser && (currentUser.role === 'admin' || currentUser.role === 'mudur' || currentUser.role === 'tamirci');
   el.innerHTML = PRODUCTS.bolumler.map(b=>{
     const urunler = PRODUCTS.urunler.filter(u=>u.bolumId===b.id);
     return `
@@ -1372,9 +1380,11 @@ function fuelBadgeColor(y){
 }
 
 function renderAraclar(){
+  const canManageFleet = currentUser && (currentUser.role === 'admin' || currentUser.role === 'mudur');
+  document.getElementById('newAracBtn').style.display = canManageFleet ? 'block' : 'none';
   const el = document.getElementById('aracList');
   if(ARACLAR.araclar.length === 0){
-    el.innerHTML = `<div class="empty-state"><div class="glyph">🚗</div><div class="title">Henüz araç eklenmedi</div><div class="sub">"Yeni Araç Ekle" ile filo aracı ekleyin.</div></div>`;
+    el.innerHTML = `<div class="empty-state"><div class="glyph">🚗</div><div class="title">Henüz araç eklenmedi</div><div class="sub">${canManageFleet ? '"Yeni Araç Ekle" ile filo aracı ekleyin.' : 'Henüz filoya araç eklenmemiş.'}</div></div>`;
     return;
   }
   el.innerHTML = ARACLAR.araclar.map(a=>{
@@ -1666,6 +1676,8 @@ function renderAdmin(){
         <select data-uid="${u.id}" data-field="role">
           <option value="personel" ${u.role==='personel'?'selected':''}>Personel</option>
           <option value="tamirci" ${u.role==='tamirci'?'selected':''}>Tamirci</option>
+          <option value="sofor" ${u.role==='sofor'?'selected':''}>Şoför</option>
+          <option value="mudur" ${u.role==='mudur'?'selected':''}>Müdür</option>
         </select>
       </div>
       <div class="pin-field"><input type="text" inputmode="numeric" maxlength="4" data-uid="${u.id}" data-field="pin" value="${escapeHtml(u.pin)}"></div>
