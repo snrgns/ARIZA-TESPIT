@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!-- saved from url=(0045)file:///C:/Users/enter/Downloads/index_1.html -->
-<html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>Arıza Takip</title>
 <style>
@@ -205,43 +205,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
     <div class="login-card">
       <div class="login-title">Arıza Takip</div>
       <div class="login-sub">GİRİŞ · PROFİLİNİZİ SEÇİN</div>
-      <div class="profile-grid" id="profileGrid">
-    <div class="profile-btn tamirci" data-id="u1">
-      <div class="avatar">🔧</div>
-      Tamirci
-      <span class="role-tag">Tamirci</span>
-    </div>
-  
-    <div class="profile-btn personel" data-id="u2">
-      <div class="avatar">👤</div>
-      Personel 2
-      <span class="role-tag">Personel</span>
-    </div>
-  
-    <div class="profile-btn personel" data-id="u3">
-      <div class="avatar">👤</div>
-      Personel 3
-      <span class="role-tag">Personel</span>
-    </div>
-  
-    <div class="profile-btn personel" data-id="u4">
-      <div class="avatar">👤</div>
-      Personel 4
-      <span class="role-tag">Personel</span>
-    </div>
-  
-    <div class="profile-btn personel" data-id="u5">
-      <div class="avatar">👤</div>
-      Personel 5
-      <span class="role-tag">Personel</span>
-    </div>
-  
-    <div class="profile-btn admin" data-id="admin">
-      <div class="avatar">🛡️</div>
-      Yönetici
-      <span class="role-tag">Yönetici</span>
-    </div>
-  </div>
+      <div class="profile-grid" id="profileGrid"></div>
       <div class="pin-row" id="pinRow"><input type="password" inputmode="numeric" maxlength="4" id="pinInput" placeholder="••••"></div>
       <div class="login-error" id="loginError"></div>
       <button class="btn-primary" id="loginBtn" style="display:none;">Giriş Yap</button>
@@ -318,7 +282,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           Yapılan işleri ekipman adına göre gruplanmış, fotoğraflar dahil tek bir PDF olarak indirin.
         </div>
         <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:10px;">
-          <input type="checkbox" id="onlyClosedCheck" checked="" style="width:16px;height:16px;">
+          <input type="checkbox" id="onlyClosedCheck" checked style="width:16px;height:16px;">
           Sadece kapatılan (tamamlanan) kayıtlar
         </label>
         <button class="btn-primary" id="exportPdfBtn">📥 PDF Raporu İndir</button>
@@ -344,10 +308,10 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         <div class="field">
           <label>Fotoğraf</label>
           <label class="photo-add-btn" for="f_foto">📷 Fotoğraf Ekle</label>
-          <input type="file" id="f_foto" accept="image/*" multiple="" style="display:none;">
+          <input type="file" id="f_foto" accept="image/*" multiple style="display:none;">
           <div class="photo-strip" id="newPhotoStrip"></div>
         </div>
-        <div class="field"><label>Bildiren Kişi</label><input type="text" id="f_bildiren" disabled=""></div>
+        <div class="field"><label>Bildiren Kişi</label><input type="text" id="f_bildiren" disabled></div>
         <div class="field">
           <label>Öncelik</label>
           <div class="priority-picker" id="priorityPicker">
@@ -381,10 +345,10 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         <div class="field">
           <label>Fotoğraf</label>
           <label class="photo-add-btn" for="f_foto_cozum">📷 Fotoğraf Ekle</label>
-          <input type="file" id="f_foto_cozum" accept="image/*" multiple="" style="display:none;">
+          <input type="file" id="f_foto_cozum" accept="image/*" multiple style="display:none;">
           <div class="photo-strip" id="closePhotoStrip"></div>
         </div>
-        <div class="field"><label>Kapatan Kişi</label><input type="text" id="f_kapatan" disabled=""></div>
+        <div class="field"><label>Kapatan Kişi</label><input type="text" id="f_kapatan" disabled></div>
         <button class="btn-danger" id="submitClose">Arızayı Giderildi Olarak Kapat</button>
       </div>
     </div>
@@ -420,7 +384,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Yeni Ürün Ekle</div><button class="sheet-close" data-close="yeniUrunOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Bölüm</label><input type="text" id="f_urun_bolum" disabled=""></div>
+        <div class="field"><label>Bölüm</label><input type="text" id="f_urun_bolum" disabled></div>
         <div class="field"><label>Ürün / Ekipman Adı *</label><input type="text" id="f_urun_ad" placeholder="örn. CNC Torna Tezgahı #3"></div>
         <div class="field">
           <label>Fotoğraf</label>
@@ -443,16 +407,72 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_1.html"></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src=""></div>
 </div>
 
-<script src="./Arıza Takip_files/html2canvas.min.js.indir"></script>
-<script src="./Arıza Takip_files/jspdf.umd.min.js.indir"></script>
-<script src="./Arıza Takip_files/supabase-js@2"></script>
+<script>
 <script>
 const SUPABASE_URL = 'https://xgvtzzgghvifooirocpw.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_PrU0_QJYpnkAzDHW355oUQ_JvUg4G9s';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function loadScriptWithFallbacks(urls){
+  return new Promise((resolve, reject)=>{
+    let i = 0;
+    function tryNext(){
+      if(i >= urls.length){ reject(new Error('Tüm kaynaklar başarısız oldu: ' + urls.join(', '))); return; }
+      const s = document.createElement('script');
+      s.src = urls[i];
+      s.onload = () => resolve();
+      s.onerror = () => { i++; tryNext(); };
+      document.head.appendChild(s);
+    }
+    tryNext();
+  });
+}
+
+let sb = null;
+let SUPABASE_READY = false;
+let pdfLibsPromise = null;
+
+async function ensureSupabaseLoaded(){
+  if(SUPABASE_READY) return true;
+  try{
+    if(typeof window.supabase === 'undefined'){
+      await loadScriptWithFallbacks([
+        'https://unpkg.com/@supabase/supabase-js@2',
+        'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
+        'https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.39.0/umd/supabase.min.js'
+      ]);
+    }
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    SUPABASE_READY = true;
+    return true;
+  }catch(e){
+    SUPABASE_READY = false;
+    return false;
+  }
+}
+
+function ensurePdfLibsLoaded(){
+  if(pdfLibsPromise) return pdfLibsPromise;
+  pdfLibsPromise = (async ()=>{
+    if(typeof window.html2canvas === 'undefined'){
+      await loadScriptWithFallbacks([
+        'https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+        'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'
+      ]);
+    }
+    if(typeof window.jspdf === 'undefined'){
+      await loadScriptWithFallbacks([
+        'https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+        'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'
+      ]);
+    }
+  })();
+  return pdfLibsPromise;
+}
 
 let DATA = { tickets: [], notifications: [] };
 let USERS = null;
@@ -1154,6 +1174,13 @@ document.getElementById('savePinsBtn').addEventListener('click', async ()=>{
 
 /* ---------------- PDF REPORT / ARCHIVE ---------------- */
 async function generatePdfReport(onlyClosed){
+  showToast('PDF kütüphaneleri yükleniyor…');
+  try{
+    await ensurePdfLibsLoaded();
+  }catch(e){
+    showToast('PDF kütüphaneleri yüklenemedi. İnternet bağlantınızı kontrol edin.');
+    return;
+  }
   const groups = {};
   DATA.tickets.forEach(t=>{
     if(onlyClosed && t.durum !== 'kapali') return;
@@ -1247,16 +1274,24 @@ document.getElementById('exportPdfBtn').addEventListener('click', ()=>{
 
 /* ---------------- INIT ---------------- */
 (async function init(){
+  const ok = await ensureSupabaseLoaded();
+  if(!ok){
+    USERS = defaultUsers();
+    renderProfileGrid();
+    document.getElementById('loginError').textContent = 'Sunucuya bağlanılamadı (ağ engeli olabilir). Geçici olarak varsayılan profillerle giriş yapabilirsiniz, ancak kayıtlar sunucuya kaydedilemez.';
+    return;
+  }
   try{
     await loadUsers();
     await loadData();
     await loadProducts();
     renderProfileGrid();
   }catch(e){
-    document.getElementById('loginError').textContent = 'Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edin.';
+    USERS = defaultUsers();
+    renderProfileGrid();
+    document.getElementById('loginError').textContent = 'Veriler yüklenirken bir sorun oluştu. Sayfayı yenilemeyi deneyin.';
   }
 })();
 </script>
-
-
-</body></html>
+</body>
+</html>
