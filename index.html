@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_18.html -->
+<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_19.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -279,7 +279,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
 
     <div class="tabbar" id="tabbar">
       <div class="tab-btn active" data-tab="liste">Kayıtlar</div>
-      <div class="tab-btn" data-tab="urunler">Ürünler</div>
+      <div class="tab-btn" data-tab="urunler">Dekor Katalog</div>
       <div class="tab-btn" data-tab="satinalma" id="satinAlmaTabBtn" style="display:none;">Satın Alma</div>
       <div class="tab-btn" data-tab="araclar" id="araclarTabBtn" style="display:none;">Araçlar</div>
       <div class="tab-btn" data-tab="admin" id="adminTabBtn" style="display:none;">Yönetim Paneli</div>
@@ -484,10 +484,6 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           <input type="file" id="f_urun_foto" accept="image/*" style="display:none;">
           <div class="photo-strip" id="urunPhotoStrip"></div>
         </div>
-        <div style="display:flex;gap:10px;">
-          <div class="field" style="flex:1;"><label>Başlangıç Stok</label><input type="number" id="f_urun_stok" min="0" value="0"></div>
-          <div class="field" style="flex:1;"><label>Min. Stok (Uyarı)</label><input type="number" id="f_urun_min_stok" min="0" value="0"></div>
-        </div>
         <button class="btn-primary" id="submitUrun">Ürünü Kaydet</button>
       </div>
     </div>
@@ -670,7 +666,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_18.html"></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_19.html"></div>
 </div>
 
 <script>
@@ -1260,12 +1256,13 @@ function startPolling(){
 
 /* ---------------- PRODUCT CATALOG ---------------- */
 function renderUrunler(){
+  const isAdmin = currentUser && currentUser.role === 'admin';
+  document.getElementById('newBolumBtn').style.display = isAdmin ? 'block' : 'none';
   const el = document.getElementById('bolumList');
   if(PRODUCTS.bolumler.length === 0){
-    el.innerHTML = `<div class="empty-state"><div class="glyph">📦</div><div class="title">Henüz bölüm eklenmedi</div><div class="sub">"Yeni Bölüm Ekle" ile örn. "Atölye 2" veya "Depo A" oluşturun.</div></div>`;
+    el.innerHTML = `<div class="empty-state"><div class="glyph">📦</div><div class="title">Henüz bölüm eklenmedi</div><div class="sub">${isAdmin ? '"Yeni Bölüm Ekle" ile örn. "Atölye 2" veya "Depo A" oluşturun.' : 'Henüz katalog oluşturulmamış.'}</div></div>`;
     return;
   }
-  const isAdmin = currentUser && currentUser.role === 'admin';
   el.innerHTML = PRODUCTS.bolumler.map(b=>{
     const urunler = PRODUCTS.urunler.filter(u=>u.bolumId===b.id);
     return `
@@ -1273,7 +1270,7 @@ function renderUrunler(){
         <div class="bolum-head">
           <div class="bolum-name">${escapeHtml(b.ad)}</div>
           <div class="bolum-actions">
-            <button class="bolum-icon-btn" data-add-urun="${b.id}">＋ Ürün</button>
+            ${isAdmin ? `<button class="bolum-icon-btn" data-add-urun="${b.id}">＋ Ürün</button>` : ''}
             ${isAdmin ? `<button class="bolum-icon-btn danger" data-del-bolum="${b.id}">🗑️</button>` : ''}
           </div>
         </div>
@@ -1298,8 +1295,6 @@ function renderUrunler(){
       const bolum = PRODUCTS.bolumler.find(b=>b.id===activeBolumIdForNewUrun);
       document.getElementById('f_urun_bolum').value = bolum ? bolum.ad : '';
       document.getElementById('f_urun_ad').value = '';
-      document.getElementById('f_urun_stok').value = '0';
-      document.getElementById('f_urun_min_stok').value = '0';
       newProductPhoto = null;
       renderPhotoStrip([], 'urunPhotoStrip');
       document.getElementById('f_urun_foto').value = '';
@@ -1364,14 +1359,12 @@ document.getElementById('f_urun_foto').addEventListener('change', async (e)=>{
 
 document.getElementById('submitUrun').addEventListener('click', async ()=>{
   const ad = document.getElementById('f_urun_ad').value.trim();
-  const stok = parseInt(document.getElementById('f_urun_stok').value) || 0;
-  const minStok = parseInt(document.getElementById('f_urun_min_stok').value) || 0;
   if(!ad){ showToast('Ürün adı zorunludur.'); return; }
   if(!activeBolumIdForNewUrun){ showToast('Bölüm bulunamadı.'); return; }
   const id = 'p'+Date.now();
-  const { error } = await sb.from('urunler').insert({ id, ad, bolum_id: activeBolumIdForNewUrun, foto: newProductPhoto, stok, min_stok: minStok });
+  const { error } = await sb.from('urunler').insert({ id, ad, bolum_id: activeBolumIdForNewUrun, foto: newProductPhoto, stok: 0, min_stok: 0 });
   if(error){ showToast('Ürün kaydedilirken bir sorun oluştu.'); return; }
-  PRODUCTS.urunler.push({ id, ad, bolumId: activeBolumIdForNewUrun, foto: newProductPhoto, stok, minStok });
+  PRODUCTS.urunler.push({ id, ad, bolumId: activeBolumIdForNewUrun, foto: newProductPhoto, stok: 0, minStok: 0 });
   document.getElementById('yeniUrunOverlay').classList.remove('open');
   renderUrunler();
   showToast('Ürün kataloğa eklendi: ' + ad);
@@ -1520,20 +1513,21 @@ function renderSatinAlma(){
   renderTalepler();
 
   const el = document.getElementById('satinAlmaList');
-  const toplamStok = PRODUCTS.urunler.reduce((sum,u)=>sum + (u.stok||0), 0);
-  const kritikSayisiGenel = PRODUCTS.urunler.filter(u=>u.stok <= u.minStok).length;
-  document.getElementById('envUrunSayisi').textContent = PRODUCTS.urunler.length;
+  const envanterUrunleri = PRODUCTS.urunler.filter(u=>!u.bolumId);
+  const toplamStok = envanterUrunleri.reduce((sum,u)=>sum + (u.stok||0), 0);
+  const kritikSayisiGenel = envanterUrunleri.filter(u=>u.stok <= u.minStok).length;
+  document.getElementById('envUrunSayisi').textContent = envanterUrunleri.length;
   document.getElementById('envToplamStok').textContent = toplamStok;
   document.getElementById('envKritikSayisi').textContent = kritikSayisiGenel;
 
-  const sorted = [...PRODUCTS.urunler].sort((a,b)=>{
+  const sorted = [...envanterUrunleri].sort((a,b)=>{
     const aLow = a.stok <= a.minStok, bLow = b.stok <= b.minStok;
     if(aLow && !bLow) return -1;
     if(!aLow && bLow) return 1;
     return a.stok - b.stok;
   });
   if(sorted.length === 0){
-    el.innerHTML = `<div class="empty-state"><div class="glyph">🛒</div><div class="title">Katalogda ürün yok</div><div class="sub">Önce "Ürünler" sekmesinden ürün ekleyin.</div></div>`;
+    el.innerHTML = `<div class="empty-state"><div class="glyph">🛒</div><div class="title">Envanterde malzeme yok</div><div class="sub">"＋ Yeni Malzeme Ekle" ile depo malzemesi ekleyin.</div></div>`;
     return;
   }
   const kritikSayisi = sorted.filter(u=>u.stok <= u.minStok).length;
@@ -1806,7 +1800,7 @@ function openAracDetay(aracId){
 function renderKatalogSecPicker(){
   const el = document.getElementById('katalogSecContent');
   if(PRODUCTS.bolumler.length === 0 || PRODUCTS.urunler.length === 0){
-    el.innerHTML = `<div class="notif-empty">Katalogda henüz ürün yok. Önce "Ürünler" sekmesinden ekleyin.</div>`;
+    el.innerHTML = `<div class="notif-empty">Katalogda henüz ürün yok. Önce "Dekor Katalog" sekmesinden ekleyin.</div>`;
     return;
   }
   let html = '';
