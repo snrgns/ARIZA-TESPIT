@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_11.html -->
+<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_12.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -603,7 +603,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_11.html"></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_12.html"></div>
 </div>
 
 <script>
@@ -1174,7 +1174,6 @@ function renderUrunler(){
     return;
   }
   const isAdmin = currentUser && currentUser.role === 'admin';
-  const canStock = currentUser && (currentUser.role === 'admin' || currentUser.role === 'mudur' || currentUser.role === 'tamirci');
   el.innerHTML = PRODUCTS.bolumler.map(b=>{
     const urunler = PRODUCTS.urunler.filter(u=>u.bolumId===b.id);
     return `
@@ -1188,34 +1187,18 @@ function renderUrunler(){
         </div>
         ${urunler.length === 0 ? `<div class="urun-empty-hint">Bu bölümde henüz ürün yok.</div>` : `
           <div class="urun-grid">
-            ${urunler.map(u=>{
-              const low = u.stok <= u.minStok;
-              return `
+            ${urunler.map(u=>`
               <div class="urun-card" data-urun="${u.id}">
                 ${isAdmin ? `<div class="urun-del" data-del-urun="${u.id}">✕</div>` : ''}
                 ${u.foto ? `<img class="urun-photo" src="${u.foto}">` : `<div class="urun-photo-empty">📦</div>`}
                 <div class="urun-name">${escapeHtml(u.ad)}</div>
-                <div class="stok-badge ${low ? 'low':'ok'}">Stok: ${u.stok}</div>
-                ${canStock ? `
-                  <div class="urun-actions">
-                    <button class="btn-kullan" data-kullan-urun="${u.id}">− Kullan</button>
-                    <button class="btn-stokekle" data-ekle-urun="${u.id}">+ Ekle</button>
-                  </div>
-                ` : ''}
               </div>
-            `;}).join('')}
+            `).join('')}
           </div>
         `}
       </div>
     `;
   }).join('');
-
-  el.querySelectorAll('[data-kullan-urun]').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{ e.stopPropagation(); openStokIslem(btn.dataset.kullanUrun, 'kullanim'); });
-  });
-  el.querySelectorAll('[data-ekle-urun]').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{ e.stopPropagation(); openStokIslem(btn.dataset.ekleUrun, 'stok_ekleme'); });
-  });
 
   el.querySelectorAll('[data-add-urun]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -1369,13 +1352,19 @@ function renderSatinAlma(){
           <div class="satinalma-name">${escapeHtml(u.ad)} ${low ? '<span class="satinalma-tag">Kritik</span>' : ''}</div>
           <div class="satinalma-meta">${bolum ? escapeHtml(bolum.ad) + ' · ' : ''}Stok: ${u.stok} / Min: ${u.minStok}</div>
         </div>
-        <button class="btn-stokekle" style="border:none;border-radius:7px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;" data-ekle-urun-sa="${u.id}">+ Stok Ekle</button>
+        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;">
+          <button class="btn-stokekle" style="border:none;border-radius:7px;padding:7px 10px;font-size:11.5px;font-weight:700;cursor:pointer;" data-ekle-urun-sa="${u.id}">+ Ekle</button>
+          <button class="btn-kullan" style="border:none;border-radius:7px;padding:7px 10px;font-size:11.5px;font-weight:700;cursor:pointer;" data-kullan-urun-sa="${u.id}">− Kullan</button>
+        </div>
       </div>
     `;
   }).join('');
 
   el.querySelectorAll('[data-ekle-urun-sa]').forEach(btn=>{
     btn.addEventListener('click', ()=>openStokIslem(btn.dataset.ekleUrunSa, 'stok_ekleme'));
+  });
+  el.querySelectorAll('[data-kullan-urun-sa]').forEach(btn=>{
+    btn.addEventListener('click', ()=>openStokIslem(btn.dataset.kullanUrunSa, 'kullanim'));
   });
 }
 
