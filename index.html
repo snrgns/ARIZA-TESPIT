@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_23.html -->
+<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_25.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -267,6 +267,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         </div>
         <div class="header-right">
           <div class="bell-btn" id="bellBtn" style="display:none;">🔔<span class="bell-badge" id="bellBadge" style="display:none;">0</span></div>
+          <div class="bell-btn" id="hesabimBtn" style="display:none;">⚙️</div>
           <div class="user-chip" id="userChip"><span class="dot"></span><span id="userChipName"></span> ⏻</div>
         </div>
       </div>
@@ -646,6 +647,22 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
     </div>
   </div>
 
+  <!-- HESABIM SHEET -->
+  <div class="overlay" id="hesabimOverlay">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header"><div class="sheet-title">Hesabım</div><button class="sheet-close" data-close="hesabimOverlay">✕</button></div>
+      <div class="sheet-content">
+        <div class="field"><label>Ad Soyad</label><input type="text" id="f_hesap_ad" placeholder="Ad Soyad"></div>
+        <div class="field"><label>Kullanıcı Adı</label><input type="text" id="f_hesap_kadi" autocapitalize="none"></div>
+        <div class="field"><label>Mevcut Şifre *</label><input type="password" id="f_hesap_mevcut_sifre" placeholder="Değişiklik için mevcut şifreni gir"></div>
+        <div class="field"><label>Yeni Şifre (boş bırakırsan değişmez)</label><input type="text" id="f_hesap_yeni_sifre" placeholder="En az 4 karakter"></div>
+        <div class="login-error" id="hesabimError" style="text-align:left;"></div>
+        <button class="btn-primary" id="submitHesabim">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
   <div class="overlay" id="yeniKullaniciOverlay">
     <div class="sheet">
       <div class="sheet-handle"></div>
@@ -669,7 +686,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_23.html"></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_25.html"></div>
 </div>
 
 <script>
@@ -861,6 +878,7 @@ async function attemptLogin(){
   document.getElementById('userChipName').textContent = currentUser.name;
   document.getElementById('f_bildiren').value = currentUser.name;
   document.getElementById('f_kapatan').value = currentUser.name;
+  document.getElementById('hesabimBtn').style.display = 'flex';
 
   if(currentUser.role === 'admin'){
     document.getElementById('adminTabBtn').style.display = 'block';
@@ -891,6 +909,7 @@ function logout(){
   document.getElementById('araclarTabBtn').style.display = 'none';
   document.getElementById('satinAlmaTabBtn').style.display = 'none';
   document.getElementById('bellBtn').style.display = 'none';
+  document.getElementById('hesabimBtn').style.display = 'none';
   switchTab('liste');
   document.getElementById('usernameInput').value = '';
   document.getElementById('pinInput').value = '';
@@ -902,6 +921,43 @@ document.getElementById('loginBtn').addEventListener('click', attemptLogin);
 document.getElementById('usernameInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') document.getElementById('pinInput').focus(); });
 document.getElementById('pinInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') attemptLogin(); });
 document.getElementById('userChip').addEventListener('click', logout);
+
+document.getElementById('hesabimBtn').addEventListener('click', ()=>{
+  const u = USERS.list.find(x=>x.id===currentUser.id);
+  document.getElementById('f_hesap_ad').value = u ? u.name : currentUser.name;
+  document.getElementById('f_hesap_kadi').value = u ? (u.username||'') : '';
+  document.getElementById('f_hesap_mevcut_sifre').value = '';
+  document.getElementById('f_hesap_yeni_sifre').value = '';
+  document.getElementById('hesabimError').textContent = '';
+  document.getElementById('hesabimOverlay').classList.add('open');
+});
+
+document.getElementById('submitHesabim').addEventListener('click', async ()=>{
+  const u = USERS.list.find(x=>x.id===currentUser.id);
+  if(!u){ document.getElementById('hesabimError').textContent = 'Kullanıcı bulunamadı.'; return; }
+  const ad = document.getElementById('f_hesap_ad').value.trim();
+  const kadi = document.getElementById('f_hesap_kadi').value.trim().toLowerCase();
+  const mevcutSifre = document.getElementById('f_hesap_mevcut_sifre').value;
+  const yeniSifre = document.getElementById('f_hesap_yeni_sifre').value.trim();
+
+  if(!ad || !kadi){ document.getElementById('hesabimError').textContent = 'Ad ve kullanıcı adı zorunludur.'; return; }
+  if(mevcutSifre !== u.pin){ document.getElementById('hesabimError').textContent = 'Mevcut şifre hatalı.'; return; }
+  if(yeniSifre && yeniSifre.length < 4){ document.getElementById('hesabimError').textContent = 'Yeni şifre en az 4 karakter olmalı.'; return; }
+  const baskaKullaniciVarMi = USERS.list.some(x => x.id !== u.id && (x.username||'').toLowerCase() === kadi);
+  if(baskaKullaniciVarMi){ document.getElementById('hesabimError').textContent = 'Bu kullanıcı adı başka birinde kayıtlı.'; return; }
+
+  const yeniPin = yeniSifre || u.pin;
+  const { error } = await sb.from('kullanicilar').update({ ad, kullanici_adi: kadi, pin: yeniPin }).eq('id', u.id);
+  if(error){ document.getElementById('hesabimError').textContent = 'Kaydedilirken bir sorun oluştu.'; return; }
+
+  u.name = ad; u.username = kadi; u.pin = yeniPin;
+  currentUser.name = ad;
+  document.getElementById('userChipName').textContent = ad;
+  document.getElementById('f_bildiren').value = ad;
+  document.getElementById('f_kapatan').value = ad;
+  document.getElementById('hesabimOverlay').classList.remove('open');
+  showToast('Hesap bilgilerin güncellendi.');
+});
 
 /* ---------------- TABS ---------------- */
 function switchTab(tab){
