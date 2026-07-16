@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_14.html -->
+<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_15.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -327,9 +327,10 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       </div>
       <div class="admin-block" style="margin-bottom:14px;">
         <div class="admin-block-title">🛒 Satın Alma Listesi</div>
-        <div style="font-size:12.5px;color:var(--ink-muted);line-height:1.4;">
+        <div style="font-size:12.5px;color:var(--ink-muted);line-height:1.4;margin-bottom:10px;">
           Stoğu minimum seviyenin altına düşen ürünler burada listelenir. Satın alma sonrası "Stok Ekle" ile stoğu güncelleyin.
         </div>
+        <button class="btn-secondary" id="newMalzemeBtn" style="margin-top:0;">＋ Yeni Malzeme Ekle</button>
       </div>
       <div id="satinAlmaList" style="display:flex;flex-direction:column;gap:10px;"></div>
     </div>
@@ -602,6 +603,22 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <!-- YENİ KULLANICI SHEET -->
+  <!-- YENİ MALZEME SHEET (fotoğraf/bölüm gerekmez) -->
+  <div class="overlay" id="yeniMalzemeOverlay">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header"><div class="sheet-title">Yeni Malzeme Ekle</div><button class="sheet-close" data-close="yeniMalzemeOverlay">✕</button></div>
+      <div class="sheet-content">
+        <div class="field"><label>Malzeme Adı *</label><input type="text" id="f_malzeme_ad" placeholder="örn. Vida seti M4"></div>
+        <div style="display:flex;gap:10px;">
+          <div class="field" style="flex:1;"><label>Başlangıç Stok</label><input type="number" id="f_malzeme_stok" min="0" value="0"></div>
+          <div class="field" style="flex:1;"><label>Min. Stok (Uyarı)</label><input type="number" id="f_malzeme_min_stok" min="0" value="0"></div>
+        </div>
+        <button class="btn-primary" id="submitMalzeme">Malzemeyi Kaydet</button>
+      </div>
+    </div>
+  </div>
+
   <div class="overlay" id="yeniKullaniciOverlay">
     <div class="sheet">
       <div class="sheet-handle"></div>
@@ -625,7 +642,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_14.html"></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_15.html"></div>
 </div>
 
 <script>
@@ -1370,15 +1387,17 @@ function renderSatinAlma(){
   const kritikSayisi = sorted.filter(u=>u.stok <= u.minStok).length;
   const summary = kritikSayisi > 0 ? `<div class="notice-banner" style="background:var(--danger-soft);color:var(--danger);border-color:var(--danger);">⚠️ ${kritikSayisi} ürün kritik stok seviyesinde, satın alınması önerilir.</div>` : `<div class="notice-banner" style="background:var(--success-soft);color:var(--success);border-color:var(--success);">✅ Şu anda kritik stokta ürün yok.</div>`;
 
+  const isAdmin = currentUser && currentUser.role === 'admin';
   el.innerHTML = summary + sorted.map(u=>{
     const bolum = PRODUCTS.bolumler.find(b=>b.id===u.bolumId);
     const low = u.stok <= u.minStok;
     return `
-      <div class="satinalma-card ${low ? 'kritik':''}" data-urun="${u.id}">
+      <div class="satinalma-card ${low ? 'kritik':''}" data-urun="${u.id}" style="position:relative;">
+        ${isAdmin ? `<div class="urun-del" style="top:-6px;right:-6px;" data-del-urun-sa="${u.id}">✕</div>` : ''}
         ${u.foto ? `<img src="${u.foto}">` : `<div class="ph-empty">📦</div>`}
         <div class="satinalma-info">
           <div class="satinalma-name">${escapeHtml(u.ad)} ${low ? '<span class="satinalma-tag">Kritik</span>' : ''}</div>
-          <div class="satinalma-meta">${bolum ? escapeHtml(bolum.ad) + ' · ' : ''}Stok: ${u.stok} / Min: ${u.minStok}</div>
+          <div class="satinalma-meta">${bolum ? escapeHtml(bolum.ad) + ' · ' : '<i>Depo Malzemesi</i> · '}Stok: ${u.stok} / Min: ${u.minStok}</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;">
           <button class="btn-stokekle" style="border:none;border-radius:7px;padding:7px 10px;font-size:11.5px;font-weight:700;cursor:pointer;" data-ekle-urun-sa="${u.id}">+ Ekle</button>
@@ -1387,6 +1406,20 @@ function renderSatinAlma(){
       </div>
     `;
   }).join('');
+
+  el.querySelectorAll('[data-del-urun-sa]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const uid = btn.dataset.delUrunSa;
+      const u = PRODUCTS.urunler.find(x=>x.id===uid);
+      if(!u) return;
+      if(!confirm(`"${u.ad}" kalıcı olarak silinsin mi?`)) return;
+      const { error } = await sb.from('urunler').delete().eq('id', uid);
+      if(error){ showToast('Silinirken bir sorun oluştu.'); return; }
+      PRODUCTS.urunler = PRODUCTS.urunler.filter(x=>x.id!==uid);
+      renderSatinAlma();
+      showToast('Silindi: ' + u.ad);
+    });
+  });
 
   el.querySelectorAll('[data-ekle-urun-sa]').forEach(btn=>{
     btn.addEventListener('click', ()=>openStokIslem(btn.dataset.ekleUrunSa, 'stok_ekleme'));
@@ -1995,6 +2028,27 @@ async function generateKatalogPdf(){
 }
 
 document.getElementById('katalogPdfBtn').addEventListener('click', generateKatalogPdf);
+
+document.getElementById('newMalzemeBtn').addEventListener('click', ()=>{
+  document.getElementById('f_malzeme_ad').value = '';
+  document.getElementById('f_malzeme_stok').value = '0';
+  document.getElementById('f_malzeme_min_stok').value = '0';
+  document.getElementById('yeniMalzemeOverlay').classList.add('open');
+});
+
+document.getElementById('submitMalzeme').addEventListener('click', async ()=>{
+  const ad = document.getElementById('f_malzeme_ad').value.trim();
+  const stok = parseInt(document.getElementById('f_malzeme_stok').value) || 0;
+  const minStok = parseInt(document.getElementById('f_malzeme_min_stok').value) || 0;
+  if(!ad){ showToast('Malzeme adı zorunludur.'); return; }
+  const id = 'm' + Date.now();
+  const { error } = await sb.from('urunler').insert({ id, ad, bolum_id: null, foto: null, stok, min_stok: minStok });
+  if(error){ showToast('Malzeme kaydedilirken bir sorun oluştu.'); return; }
+  PRODUCTS.urunler.push({ id, ad, bolumId: null, foto: null, stok, minStok });
+  document.getElementById('yeniMalzemeOverlay').classList.remove('open');
+  renderSatinAlma();
+  showToast('Malzeme eklendi: ' + ad);
+});
 
 /* ---------------- INIT ---------------- */
 (async function init(){
