@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_13.html -->
+<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_14.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -300,11 +300,31 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
     </div>
 
     <div id="urunlerTab" style="display:none;padding:12px 16px 90px;">
-      <button class="btn-secondary" id="newBolumBtn" style="margin-top:0;">＋ Yeni Bölüm Ekle</button>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-secondary" id="newBolumBtn" style="margin-top:0;flex:1;">＋ Yeni Bölüm Ekle</button>
+        <button class="btn-secondary" id="katalogPdfBtn" style="margin-top:0;flex:1;">📄 Katalog PDF</button>
+      </div>
       <div id="bolumList" style="margin-top:14px;display:flex;flex-direction:column;gap:14px;"></div>
     </div>
 
     <div id="satinAlmaTab" style="display:none;padding:12px 16px 90px;">
+      <div class="admin-block" style="margin-bottom:14px;">
+        <div class="admin-block-title">📊 Envanter Özeti</div>
+        <div class="stats-row" style="margin-top:0;">
+          <div class="stat-chip" style="background:var(--bg);border-color:var(--border);">
+            <div class="stat-num" id="envUrunSayisi" style="color:var(--ink);">–</div>
+            <div class="stat-label" style="color:var(--ink-muted);">Ürün Çeşidi</div>
+          </div>
+          <div class="stat-chip" style="background:var(--bg);border-color:var(--border);">
+            <div class="stat-num" id="envToplamStok" style="color:var(--ink);">–</div>
+            <div class="stat-label" style="color:var(--ink-muted);">Toplam Stok Adedi</div>
+          </div>
+          <div class="stat-chip" style="background:var(--bg);border-color:var(--border);">
+            <div class="stat-num" id="envKritikSayisi" style="color:var(--danger);">–</div>
+            <div class="stat-label" style="color:var(--ink-muted);">Kritik Ürün</div>
+          </div>
+        </div>
+      </div>
       <div class="admin-block" style="margin-bottom:14px;">
         <div class="admin-block-title">🛒 Satın Alma Listesi</div>
         <div style="font-size:12.5px;color:var(--ink-muted);line-height:1.4;">
@@ -605,7 +625,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_13.html"></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_14.html"></div>
 </div>
 
 <script>
@@ -1331,6 +1351,12 @@ document.getElementById('submitStokIslem').addEventListener('click', async ()=>{
 /* ---------------- SATIN ALMA ---------------- */
 function renderSatinAlma(){
   const el = document.getElementById('satinAlmaList');
+  const toplamStok = PRODUCTS.urunler.reduce((sum,u)=>sum + (u.stok||0), 0);
+  const kritikSayisiGenel = PRODUCTS.urunler.filter(u=>u.stok <= u.minStok).length;
+  document.getElementById('envUrunSayisi').textContent = PRODUCTS.urunler.length;
+  document.getElementById('envToplamStok').textContent = toplamStok;
+  document.getElementById('envKritikSayisi').textContent = kritikSayisiGenel;
+
   const sorted = [...PRODUCTS.urunler].sort((a,b)=>{
     const aLow = a.stok <= a.minStok, bLow = b.stok <= b.minStok;
     if(aLow && !bLow) return -1;
@@ -1886,6 +1912,89 @@ document.getElementById('exportPdfBtn').addEventListener('click', ()=>{
   const onlyClosed = document.getElementById('onlyClosedCheck').checked;
   generatePdfReport(onlyClosed);
 });
+
+/* ---------------- ÜRÜN KATALOĞU PDF ---------------- */
+async function generateKatalogPdf(){
+  showToast('PDF kütüphaneleri yükleniyor…');
+  try{
+    await ensurePdfLibsLoaded();
+  }catch(e){
+    showToast('PDF kütüphaneleri yüklenemedi. İnternet bağlantınızı kontrol edin.');
+    return;
+  }
+  if(PRODUCTS.bolumler.length === 0){ showToast('Katalogda henüz bölüm/ürün yok.'); return; }
+
+  showToast('PDF hazırlanıyor, lütfen bekleyin…');
+
+  const container = document.createElement('div');
+  container.style.position = 'fixed';
+  container.style.left = '-9999px';
+  container.style.top = '0';
+  container.style.width = '800px';
+  container.style.background = '#ffffff';
+  container.style.padding = '30px';
+  container.style.fontFamily = "'IBM Plex Sans', sans-serif";
+  container.style.color = '#1B232C';
+
+  let html = `<div style="border-bottom:3px solid #146C71;padding-bottom:14px;margin-bottom:24px;">
+    <div style="font-size:22px;font-weight:700;">Ürün Kataloğu</div>
+    <div style="font-size:12px;color:#6B7680;margin-top:4px;">Oluşturulma: ${formatDate(new Date().toISOString())}</div>
+  </div>`;
+
+  PRODUCTS.bolumler.forEach(b=>{
+    const urunler = PRODUCTS.urunler.filter(u=>u.bolumId===b.id);
+    html += `<div style="font-size:17px;font-weight:700;background:#E3EEEE;color:#0E4F53;padding:8px 12px;border-radius:6px;margin:22px 0 12px;">${escapeHtml(b.ad)}</div>`;
+    if(urunler.length === 0){
+      html += `<div style="font-size:12.5px;color:#6B7680;margin-bottom:10px;">Bu bölümde ürün yok.</div>`;
+    } else {
+      html += `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:10px;">`;
+      urunler.forEach(u=>{
+        html += `<div style="border:1px solid #DCE1E6;border-radius:8px;padding:10px;text-align:center;">
+          ${u.foto ? `<img src="${u.foto}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;">` : `<div style="width:100%;aspect-ratio:1;background:#EEF1F3;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:22px;">📦</div>`}
+          <div style="font-size:12px;font-weight:600;margin-top:6px;">${escapeHtml(u.ad)}</div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+  });
+
+  container.innerHTML = html;
+  document.body.appendChild(container);
+
+  try{
+    const canvas = await html2canvas(container, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidthMm = 210, pageHeightMm = 297;
+    const ratio = pageWidthMm / canvas.width;
+    const pageHeightPx = Math.floor(pageHeightMm / ratio);
+    let renderedPx = 0;
+    let firstPage = true;
+
+    while(renderedPx < canvas.height){
+      const sliceHeightPx = Math.min(pageHeightPx, canvas.height - renderedPx);
+      const pageCanvas = document.createElement('canvas');
+      pageCanvas.width = canvas.width;
+      pageCanvas.height = sliceHeightPx;
+      const ctx = pageCanvas.getContext('2d');
+      ctx.drawImage(canvas, 0, renderedPx, canvas.width, sliceHeightPx, 0, 0, canvas.width, sliceHeightPx);
+      const imgData = pageCanvas.toDataURL('image/jpeg', 0.85);
+      if(!firstPage) pdf.addPage();
+      pdf.addImage(imgData, 'JPEG', 0, 0, pageWidthMm, sliceHeightPx * ratio);
+      renderedPx += sliceHeightPx;
+      firstPage = false;
+    }
+
+    pdf.save(`urun-katalogu-${new Date().toISOString().slice(0,10)}.pdf`);
+    showToast('Katalog PDF indirildi.');
+  }catch(e){
+    showToast('PDF oluşturulurken bir sorun oluştu.');
+  }finally{
+    document.body.removeChild(container);
+  }
+}
+
+document.getElementById('katalogPdfBtn').addEventListener('click', generateKatalogPdf);
 
 /* ---------------- INIT ---------------- */
 (async function init(){
