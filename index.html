@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_17.html -->
+<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_18.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -326,6 +326,14 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         </div>
       </div>
       <div class="admin-block" style="margin-bottom:14px;">
+        <div class="admin-block-title">📋 Satın Alma Talepleri</div>
+        <div style="font-size:12.5px;color:var(--ink-muted);line-height:1.4;margin-bottom:10px;">
+          Tamirci veya Müdür yeni bir malzeme/ürün talebi oluşturabilir. Talep oluşunca Yönetici'ye bildirim gider.
+        </div>
+        <button class="btn-secondary" id="newTalepBtn" style="margin-top:0;">＋ Satın Alma Talebi Oluştur</button>
+        <div id="talepList" style="margin-top:12px;display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+      <div class="admin-block" style="margin-bottom:14px;">
         <div class="admin-block-title">🛒 Satın Alma Listesi</div>
         <div style="font-size:12.5px;color:var(--ink-muted);line-height:1.4;margin-bottom:10px;">
           Stoğu minimum seviyenin altına düşen ürünler burada listelenir. Satın alma sonrası "Stok Ekle" ile stoğu güncelleyin.
@@ -605,6 +613,25 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
 
   <!-- YENİ KULLANICI SHEET -->
   <!-- YENİ MALZEME SHEET (fotoğraf/bölüm gerekmez) -->
+  <!-- SATIN ALMA TALEBİ SHEET -->
+  <div class="overlay" id="yeniTalepOverlay">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header"><div class="sheet-title">Satın Alma Talebi Oluştur</div><button class="sheet-close" data-close="yeniTalepOverlay">✕</button></div>
+      <div class="sheet-content">
+        <div class="field"><label>Ürün / Malzeme Adı *</label><input type="text" id="f_talep_ad" placeholder="örn. Hidrolik yağı 5L"></div>
+        <div class="field"><label>Açıklama *</label><textarea id="f_talep_aciklama" rows="4" placeholder="Neden gerekli, ne kadar gerekli, aciliyeti nedir?"></textarea></div>
+        <div class="field">
+          <label>Fotoğraf</label>
+          <label class="photo-add-btn" for="f_talep_foto">📷 Fotoğraf Ekle</label>
+          <input type="file" id="f_talep_foto" accept="image/*" style="display:none;">
+          <div class="photo-strip" id="talepPhotoStrip"></div>
+        </div>
+        <button class="btn-primary" id="submitTalep">Talebi Gönder</button>
+      </div>
+    </div>
+  </div>
+
   <div class="overlay" id="yeniMalzemeOverlay">
     <div class="sheet">
       <div class="sheet-handle"></div>
@@ -643,7 +670,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_17.html"></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_18.html"></div>
 </div>
 
 <script>
@@ -722,6 +749,8 @@ let newProductPhoto = null;
 let activeBolumIdForNewUrun = null;
 let pendingUserPhotos = {};
 let ARACLAR = { araclar: [], hareketler: [] };
+let SATIN_ALMA_TALEPLERI = [];
+let talepPhoto = null;
 let newAracPhoto = null;
 let cikisPhoto = null;
 let donusPhoto = null;
@@ -783,9 +812,18 @@ async function loadData(){
   if(!e2 && notifs){
     DATA.notifications = notifs.map(n=>({
       id: n.id, ticketId: n.ticket_id, ekipman: n.ekipman, oncelik: n.oncelik,
-      bildiren: n.bildiren, createdAt: n.created_at, readBy: n.read_by || []
+      bildiren: n.bildiren, createdAt: n.created_at, readBy: n.read_by || [],
+      tip: n.tip || 'ariza', talepId: n.talep_id
     }));
   } else { DATA.notifications = []; }
+}
+async function loadSatinAlmaTalepleri(){
+  const { data, error } = await sb.from('satin_alma_talepleri').select('*').order('olusturma_tarihi', { ascending:false });
+  SATIN_ALMA_TALEPLERI = (!error && data) ? data.map(t=>({
+    id: t.id, malzemeAdi: t.malzeme_adi, aciklama: t.aciklama, foto: t.foto,
+    talepEden: t.talep_eden, talepEdenId: t.talep_eden_id, durum: t.durum,
+    olusturmaTarihi: t.olusturma_tarihi
+  })) : [];
 }
 async function loadProducts(){
   const { data: bol, error: e1 } = await sb.from('bolumler').select('*');
@@ -908,7 +946,8 @@ const SINGLE_PHOTO_SETTERS = {
   urunPhotoStrip: ()=>{ newProductPhoto = null; },
   aracPhotoStrip: ()=>{ newAracPhoto = null; },
   cikisPhotoStrip: ()=>{ cikisPhoto = null; },
-  donusPhotoStrip: ()=>{ donusPhoto = null; }
+  donusPhotoStrip: ()=>{ donusPhoto = null; },
+  talepPhotoStrip: ()=>{ talepPhoto = null; }
 };
 function renderPhotoStrip(arr, stripId){
   const el = document.getElementById(stripId);
@@ -1145,10 +1184,13 @@ document.getElementById('searchInput').addEventListener('input', (e)=>{ searchTe
 /* ---------------- NOTIFICATIONS ---------------- */
 function relevantNotifs(){
   if(!currentUser) return [];
-  return DATA.notifications; // both admin and tamirci see all creation notifications
+  return DATA.notifications.filter(n=>{
+    if(n.tip === 'satin_alma') return currentUser.role === 'admin';
+    return true; // arıza bildirimleri: admin, müdür, tamirci hepsi görür
+  });
 }
 function updateBellBadge(){
-  if(!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'tamirci')) return;
+  if(!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'tamirci' && currentUser.role !== 'mudur')) return;
   const unread = relevantNotifs().filter(n => !n.readBy.includes(currentUser.id)).length;
   const badge = document.getElementById('bellBadge');
   if(unread > 0){ badge.style.display = 'flex'; badge.textContent = unread > 99 ? '99+' : unread; }
@@ -1160,6 +1202,15 @@ function renderNotifList(){
   if(list.length === 0){ el.innerHTML = `<div class="notif-empty">Henüz bildirim yok.</div>`; return; }
   el.innerHTML = list.map(n=>{
     const isRead = n.readBy.includes(currentUser.id);
+    if(n.tip === 'satin_alma'){
+      return `<div class="notif-item" data-talep="${n.talepId}">
+        <div class="notif-dot ${isRead?'read':''}"></div>
+        <div>
+          <div class="notif-text">🛒 Satın alma talebi: <b>${escapeHtml(n.ekipman)}</b> — ${escapeHtml(n.bildiren)} talep etti</div>
+          <div class="notif-time">${formatDate(n.createdAt)}</div>
+        </div>
+      </div>`;
+    }
     return `<div class="notif-item" data-ticket="${n.ticketId}">
       <div class="notif-dot ${isRead?'read':''}"></div>
       <div>
@@ -1171,7 +1222,8 @@ function renderNotifList(){
   el.querySelectorAll('.notif-item').forEach(item=>{
     item.addEventListener('click', ()=>{
       document.getElementById('notifOverlay').classList.remove('open');
-      openDetail(parseInt(item.dataset.ticket));
+      if(item.dataset.talep){ switchTab('satinalma'); }
+      else { openDetail(parseInt(item.dataset.ticket)); }
     });
   });
 }
@@ -1371,7 +1423,102 @@ document.getElementById('submitStokIslem').addEventListener('click', async ()=>{
 });
 
 /* ---------------- SATIN ALMA ---------------- */
+/* ---------------- SATIN ALMA TALEPLERİ ---------------- */
+function renderTalepler(){
+  const el = document.getElementById('talepList');
+  const isAdmin = currentUser && currentUser.role === 'admin';
+  const sorted = [...SATIN_ALMA_TALEPLERI].sort((a,b)=> new Date(b.olusturmaTarihi) - new Date(a.olusturmaTarihi));
+  if(sorted.length === 0){
+    el.innerHTML = `<div class="notif-empty">Henüz satın alma talebi yok.</div>`;
+    return;
+  }
+  const durumBadge = { bekliyor:'acik', onaylandi:'kapali', reddedildi:'kapali' };
+  const durumLabel = { bekliyor:'Bekliyor', onaylandi:'Onaylandı', reddedildi:'Reddedildi' };
+  el.innerHTML = sorted.map(t=>`
+    <div class="trip-item" data-talep="${t.id}">
+      <div class="trip-top">
+        <b>${escapeHtml(t.malzemeAdi)}</b>
+        <span class="trip-status ${t.durum==='reddedildi' ? 'acik' : durumBadge[t.durum]}" style="${t.durum==='reddedildi' ? 'background:var(--danger-soft);color:var(--danger);' : ''}">${durumLabel[t.durum]}</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--ink);margin-bottom:4px;">${escapeHtml(t.aciklama)}</div>
+      <div style="font-size:11.5px;color:var(--ink-muted);">Talep eden: ${escapeHtml(t.talepEden)||'—'} · ${formatDate(t.olusturmaTarihi)}</div>
+      ${t.foto ? `<div class="detail-photo-grid" style="grid-template-columns:repeat(4,1fr);margin-top:6px;"><img data-src="${t.foto}" style="cursor:pointer;"></div>` : ''}
+      ${(isAdmin && t.durum === 'bekliyor') ? `
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button class="btn-stokekle" style="flex:1;border:none;border-radius:7px;padding:8px;font-size:12px;font-weight:700;cursor:pointer;" data-onayla="${t.id}">✅ Onayla</button>
+          <button class="btn-ghost-danger" style="flex:1;margin-top:0;" data-reddet="${t.id}">❌ Reddet</button>
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+
+  el.querySelectorAll('.detail-photo-grid img').forEach(img=>{
+    img.addEventListener('click', ()=>openLightbox(img.dataset.src));
+  });
+  el.querySelectorAll('[data-onayla]').forEach(btn=>{
+    btn.addEventListener('click', ()=>updateTalepDurum(btn.dataset.onayla, 'onaylandi'));
+  });
+  el.querySelectorAll('[data-reddet]').forEach(btn=>{
+    btn.addEventListener('click', ()=>updateTalepDurum(btn.dataset.reddet, 'reddedildi'));
+  });
+}
+
+async function updateTalepDurum(id, durum){
+  const t = SATIN_ALMA_TALEPLERI.find(x=>x.id===id);
+  if(!t) return;
+  const { error } = await sb.from('satin_alma_talepleri').update({ durum }).eq('id', id);
+  if(error){ showToast('Talep güncellenirken bir sorun oluştu.'); return; }
+  t.durum = durum;
+  renderTalepler();
+  showToast(durum === 'onaylandi' ? 'Talep onaylandı.' : 'Talep reddedildi.');
+}
+
+document.getElementById('newTalepBtn').addEventListener('click', ()=>{
+  document.getElementById('f_talep_ad').value = '';
+  document.getElementById('f_talep_aciklama').value = '';
+  talepPhoto = null;
+  renderPhotoStrip([], 'talepPhotoStrip');
+  document.getElementById('f_talep_foto').value = '';
+  document.getElementById('yeniTalepOverlay').classList.add('open');
+});
+
+document.getElementById('f_talep_foto').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  try{ talepPhoto = await resizeImage(file); renderPhotoStrip([talepPhoto], 'talepPhotoStrip'); }
+  catch(err){ showToast('Fotoğraf işlenirken bir sorun oluştu.'); }
+});
+
+document.getElementById('submitTalep').addEventListener('click', async ()=>{
+  const ad = document.getElementById('f_talep_ad').value.trim();
+  const aciklama = document.getElementById('f_talep_aciklama').value.trim();
+  if(!ad || !aciklama){ showToast('Ürün/malzeme adı ve açıklama zorunludur.'); return; }
+  const id = 't' + Date.now();
+  const olusturmaTarihi = new Date().toISOString();
+  const { error } = await sb.from('satin_alma_talepleri').insert({
+    id, malzeme_adi: ad, aciklama, foto: talepPhoto,
+    talep_eden: currentUser.name, talep_eden_id: currentUser.id, durum: 'bekliyor'
+  });
+  if(error){ showToast('Talep oluşturulurken bir sorun oluştu.'); return; }
+  SATIN_ALMA_TALEPLERI.unshift({ id, malzemeAdi: ad, aciklama, foto: talepPhoto, talepEden: currentUser.name, talepEdenId: currentUser.id, durum: 'bekliyor', olusturmaTarihi });
+
+  const notifId = 'n' + Date.now() + Math.floor(Math.random()*1000);
+  await sb.from('bildirimler').insert({
+    id: notifId, tip: 'satin_alma', talep_id: id, ekipman: ad, bildiren: currentUser.name, read_by: []
+  });
+  DATA.notifications.unshift({ id: notifId, tip: 'satin_alma', talepId: id, ekipman: ad, oncelik: null, bildiren: currentUser.name, createdAt: olusturmaTarihi, readBy: [] });
+
+  document.getElementById('yeniTalepOverlay').classList.remove('open');
+  renderTalepler();
+  updateBellBadge();
+  showToast('Satın alma talebi gönderildi, Yönetici\'ye bildirim iletildi.');
+});
+
 function renderSatinAlma(){
+  const canRequest = currentUser && (currentUser.role === 'admin' || currentUser.role === 'mudur' || currentUser.role === 'tamirci');
+  document.getElementById('newTalepBtn').style.display = canRequest ? 'block' : 'none';
+  renderTalepler();
+
   const el = document.getElementById('satinAlmaList');
   const toplamStok = PRODUCTS.urunler.reduce((sum,u)=>sum + (u.stok||0), 0);
   const kritikSayisiGenel = PRODUCTS.urunler.filter(u=>u.stok <= u.minStok).length;
@@ -2069,6 +2216,7 @@ document.getElementById('submitMalzeme').addEventListener('click', async ()=>{
     await loadData();
     await loadProducts();
     await loadAraclar();
+    await loadSatinAlmaTalepleri();
     renderProfileGrid();
   }catch(e){
     USERS = defaultUsers();
