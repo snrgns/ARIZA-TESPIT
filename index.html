@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_12.html -->
+<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_13.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -523,7 +523,8 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-content">
         <div class="field"><label>Araç</label><input type="text" id="f_cikis_arac" disabled=""></div>
         <div class="field"><label>Kullanan Kişi *</label><input type="text" id="f_cikis_kullanan" placeholder="Ad Soyad"></div>
-        <div class="field"><label>Gidilen Yer *</label><input type="text" id="f_cikis_yer" placeholder="örn. Müşteri X - Ataşehir"></div>
+        <div class="field"><label>Başlangıç Yeri *</label><input type="text" id="f_cikis_baslangic" placeholder="örn. Depo / Merkez Ofis"></div>
+        <div class="field"><label>Gidilecek Yer *</label><input type="text" id="f_cikis_yer" placeholder="örn. Müşteri X - Ataşehir"></div>
         <div class="field">
           <label>Gösterge Fotoğrafı</label>
           <label class="photo-add-btn" for="f_cikis_foto">📷 Fotoğraf Ekle</label>
@@ -550,6 +551,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Araç Dönüş Kaydı</div><button class="sheet-close" data-close="aracDonusOverlay">✕</button></div>
       <div class="sheet-content">
+        <div class="field"><label>Bitiş Yeri *</label><input type="text" id="f_donus_yer" placeholder="örn. Depo / Merkez Ofis"></div>
         <div class="field">
           <label>Dönüş Fotoğrafı (Gösterge)</label>
           <label class="photo-add-btn" for="f_donus_foto">📷 Fotoğraf Ekle</label>
@@ -603,7 +605,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_12.html"></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_13.html"></div>
 </div>
 
 <script>
@@ -758,9 +760,9 @@ async function loadAraclar(){
   const { data: hr, error: e2 } = await sb.from('arac_hareketleri').select('*').order('alis_saati', { ascending:false });
   ARACLAR.araclar = (!e1 && ar) ? ar.map(a=>({ id:a.id, plaka:a.plaka, model:a.model, foto:a.foto, guncelKm:a.guncel_km, guncelYakit:a.guncel_yakit })) : [];
   ARACLAR.hareketler = (!e2 && hr) ? hr.map(h=>({
-    id:h.id, aracId:h.arac_id, kullanan:h.kullanan, gidilenYer:h.gidilen_yer,
+    id:h.id, aracId:h.arac_id, kullanan:h.kullanan, baslangicYeri:h.baslangic_yeri, gidilenYer:h.gidilen_yer,
     alisSaati:h.alis_saati, alisKm:h.alis_km, alisYakit:h.alis_yakit, alisFoto:h.alis_foto,
-    donusSaati:h.donus_saati, donusKm:h.donus_km, donusYakit:h.donus_yakit, donusFoto:h.donus_foto,
+    donusSaati:h.donus_saati, donusYeri:h.donus_yeri, donusKm:h.donus_km, donusYakit:h.donus_yakit, donusFoto:h.donus_foto,
     createdBy:h.created_by, createdByName:h.created_by_name
   })) : [];
 }
@@ -1444,6 +1446,7 @@ function openAracCikis(aracId){
   activeAracIdForCikis = aracId;
   document.getElementById('f_cikis_arac').value = a.plaka + (a.model ? ' · ' + a.model : '');
   document.getElementById('f_cikis_kullanan').value = '';
+  document.getElementById('f_cikis_baslangic').value = '';
   document.getElementById('f_cikis_yer').value = '';
   document.getElementById('f_cikis_km').value = a.guncelKm;
   document.getElementById('f_cikis_yakit').value = a.guncelYakit;
@@ -1463,16 +1466,17 @@ document.getElementById('f_cikis_foto').addEventListener('change', async (e)=>{
 
 document.getElementById('submitAracCikis').addEventListener('click', async ()=>{
   const kullanan = document.getElementById('f_cikis_kullanan').value.trim();
+  const baslangic = document.getElementById('f_cikis_baslangic').value.trim();
   const yer = document.getElementById('f_cikis_yer').value.trim();
   const km = parseInt(document.getElementById('f_cikis_km').value);
   const yakit = document.getElementById('f_cikis_yakit').value;
-  if(!kullanan || !yer || !km){ showToast('Kullanan, gidilen yer ve KM zorunludur.'); return; }
+  if(!kullanan || !baslangic || !yer || !km){ showToast('Kullanan, başlangıç yeri, gidilecek yer ve KM zorunludur.'); return; }
   const a = ARACLAR.araclar.find(x=>x.id===activeAracIdForCikis);
   if(!a) return;
   const id = 'h' + Date.now();
   const alisSaati = new Date().toISOString();
   const { error } = await sb.from('arac_hareketleri').insert({
-    id, arac_id: a.id, kullanan, gidilen_yer: yer, alis_saati: alisSaati,
+    id, arac_id: a.id, kullanan, baslangic_yeri: baslangic, gidilen_yer: yer, alis_saati: alisSaati,
     alis_km: km, alis_yakit: yakit, alis_foto: cikisPhoto,
     created_by: currentUser.id, created_by_name: currentUser.name
   });
@@ -1480,8 +1484,8 @@ document.getElementById('submitAracCikis').addEventListener('click', async ()=>{
   await sb.from('araclar').update({ guncel_km: km, guncel_yakit: yakit }).eq('id', a.id);
   a.guncelKm = km; a.guncelYakit = yakit;
   ARACLAR.hareketler.unshift({
-    id, aracId: a.id, kullanan, gidilenYer: yer, alisSaati, alisKm: km, alisYakit: yakit, alisFoto: cikisPhoto,
-    donusSaati: null, donusKm: null, donusYakit: null, donusFoto: null,
+    id, aracId: a.id, kullanan, baslangicYeri: baslangic, gidilenYer: yer, alisSaati, alisKm: km, alisYakit: yakit, alisFoto: cikisPhoto,
+    donusSaati: null, donusYeri: null, donusKm: null, donusYakit: null, donusFoto: null,
     createdBy: currentUser.id, createdByName: currentUser.name
   });
   document.getElementById('aracCikisOverlay').classList.remove('open');
@@ -1494,6 +1498,7 @@ function openAracDonus(hareketId){
   if(!h) return;
   activeHareketIdForDonus = hareketId;
   const a = ARACLAR.araclar.find(x=>x.id===h.aracId);
+  document.getElementById('f_donus_yer').value = h.gidilenYer || '';
   document.getElementById('f_donus_km').value = a ? a.guncelKm : h.alisKm;
   document.getElementById('f_donus_yakit').value = h.alisYakit || 'Dolu';
   donusPhoto = null;
@@ -1511,18 +1516,19 @@ document.getElementById('f_donus_foto').addEventListener('change', async (e)=>{
 });
 
 document.getElementById('submitAracDonus').addEventListener('click', async ()=>{
+  const yer = document.getElementById('f_donus_yer').value.trim();
   const km = parseInt(document.getElementById('f_donus_km').value);
   const yakit = document.getElementById('f_donus_yakit').value;
-  if(!km){ showToast('Dönüş KM zorunludur.'); return; }
+  if(!yer || !km){ showToast('Bitiş yeri ve dönüş KM zorunludur.'); return; }
   const h = ARACLAR.hareketler.find(x=>x.id===activeHareketIdForDonus);
   if(!h) return;
   const donusSaati = new Date().toISOString();
   const { error } = await sb.from('arac_hareketleri').update({
-    donus_saati: donusSaati, donus_km: km, donus_yakit: yakit, donus_foto: donusPhoto
+    donus_saati: donusSaati, donus_yeri: yer, donus_km: km, donus_yakit: yakit, donus_foto: donusPhoto
   }).eq('id', h.id);
   if(error){ showToast('Dönüş kaydedilirken bir sorun oluştu.'); return; }
   await sb.from('araclar').update({ guncel_km: km, guncel_yakit: yakit }).eq('id', h.aracId);
-  h.donusSaati = donusSaati; h.donusKm = km; h.donusYakit = yakit; h.donusFoto = donusPhoto;
+  h.donusSaati = donusSaati; h.donusYeri = yer; h.donusKm = km; h.donusYakit = yakit; h.donusFoto = donusPhoto;
   const a = ARACLAR.araclar.find(x=>x.id===h.aracId);
   if(a){ a.guncelKm = km; a.guncelYakit = yakit; }
   document.getElementById('aracDonusOverlay').classList.remove('open');
@@ -1546,7 +1552,7 @@ function openAracDetay(aracId){
   if(!acikTrip){
     html += `<button class="btn-primary" id="detayCikisBtn" style="margin-top:14px;">🚗 Yeni Çıkış Kaydı</button>`;
   } else {
-    html += `<div class="notice-banner" style="margin-top:14px;">Bu araç şu anda dışarıda: <b>${escapeHtml(acikTrip.kullanan)}</b> · ${escapeHtml(acikTrip.gidilenYer)}</div>
+    html += `<div class="notice-banner" style="margin-top:14px;">Bu araç şu anda dışarıda: <b>${escapeHtml(acikTrip.kullanan)}</b> · ${escapeHtml(acikTrip.baslangicYeri)||'—'} → ${escapeHtml(acikTrip.gidilenYer)}</div>
     <button class="btn-secondary" id="detayDonusBtn" data-hareket="${acikTrip.id}">✅ Dönüşü Kaydet</button>`;
   }
 
@@ -1561,11 +1567,11 @@ function openAracDetay(aracId){
             <b>${escapeHtml(h.kullanan)}</b>
             <span class="trip-status ${h.donusSaati?'kapali':'acik'}">${h.donusSaati?'Tamamlandı':'Dışarıda'}</span>
           </div>
-          <div style="font-size:12px;color:var(--ink-muted);margin-bottom:4px;">📍 ${escapeHtml(h.gidilenYer)}</div>
+          <div style="font-size:12px;color:var(--ink-muted);margin-bottom:4px;">📍 ${escapeHtml(h.baslangicYeri)||'—'} → ${escapeHtml(h.gidilenYer)}</div>
           <div style="font-size:12px;color:var(--ink-muted);">Çıkış: ${formatDate(h.alisSaati)} · KM: ${h.alisKm} · ⛽ ${escapeHtml(h.alisYakit)||'—'}</div>
           ${h.alisFoto ? `<div class="detail-photo-grid" style="grid-template-columns:repeat(4,1fr);margin-top:6px;"><img data-src="${h.alisFoto}" style="cursor:pointer;"></div>` : ''}
           ${h.donusSaati ? `
-            <div style="font-size:12px;color:var(--ink-muted);margin-top:6px;">Dönüş: ${formatDate(h.donusSaati)} · KM: ${h.donusKm} · ⛽ ${escapeHtml(h.donusYakit)||'—'}</div>
+            <div style="font-size:12px;color:var(--ink-muted);margin-top:6px;">Dönüş: ${formatDate(h.donusSaati)} · ${escapeHtml(h.donusYeri)||'—'} · KM: ${h.donusKm} · ⛽ ${escapeHtml(h.donusYakit)||'—'}</div>
             ${h.donusFoto ? `<div class="detail-photo-grid" style="grid-template-columns:repeat(4,1fr);margin-top:6px;"><img data-src="${h.donusFoto}" style="cursor:pointer;"></div>` : ''}
           ` : ''}
         </div>
