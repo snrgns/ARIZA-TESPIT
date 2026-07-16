@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_15.html -->
+<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_16.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -503,6 +503,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         <div class="field"><label>Ürün</label><input type="text" id="f_stok_urun" disabled=""></div>
         <div class="field"><label>Mevcut Stok</label><input type="text" id="f_stok_mevcut" disabled=""></div>
         <div class="field"><label id="stokMiktarLabel">Miktar *</label><input type="number" id="f_stok_miktar" min="1" value="1"></div>
+        <div class="field"><label id="stokAciklamaLabel">Açıklama</label><textarea id="f_stok_aciklama" rows="3" placeholder="örn. Hangi arıza/işlem için kullanıldı"></textarea></div>
         <button class="btn-primary" id="submitStokIslem">Onayla</button>
       </div>
     </div>
@@ -642,7 +643,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_15.html"></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_16.html"></div>
 </div>
 
 <script>
@@ -1337,8 +1338,10 @@ function openStokIslem(urunId, tip){
   document.getElementById('f_stok_urun').value = u.ad;
   document.getElementById('f_stok_mevcut').value = u.stok;
   document.getElementById('stokMiktarLabel').textContent = tip === 'kullanim' ? 'Kullanılan Miktar *' : 'Eklenen Miktar *';
+  document.getElementById('stokAciklamaLabel').textContent = tip === 'kullanim' ? 'Açıklama (hangi arıza/iş için) *' : 'Açıklama (opsiyonel)';
   document.getElementById('f_stok_miktar').value = 1;
   document.getElementById('f_stok_miktar').max = tip === 'kullanim' ? u.stok : '';
+  document.getElementById('f_stok_aciklama').value = '';
   document.getElementById('stokIslemOverlay').classList.add('open');
 }
 
@@ -1346,15 +1349,17 @@ document.getElementById('submitStokIslem').addEventListener('click', async ()=>{
   const u = PRODUCTS.urunler.find(x=>x.id===activeStokUrunId);
   if(!u) return;
   const miktar = parseInt(document.getElementById('f_stok_miktar').value);
+  const aciklama = document.getElementById('f_stok_aciklama').value.trim();
   if(!miktar || miktar < 1){ showToast('Geçerli bir miktar girin.'); return; }
   if(activeStokTip === 'kullanim' && miktar > u.stok){ showToast('Kullanılan miktar mevcut stoktan fazla olamaz.'); return; }
+  if(activeStokTip === 'kullanim' && !aciklama){ showToast('Kullanım için açıklama girmeniz gerekiyor.'); return; }
 
   const yeniStok = activeStokTip === 'kullanim' ? Math.max(0, u.stok - miktar) : u.stok + miktar;
   const { error } = await sb.from('urunler').update({ stok: yeniStok }).eq('id', u.id);
   if(error){ showToast('Stok güncellenirken bir sorun oluştu.'); return; }
 
   await sb.from('stok_hareketleri').insert({
-    id: 'h' + Date.now(), urun_id: u.id, tip: activeStokTip, miktar,
+    id: 'h' + Date.now(), urun_id: u.id, tip: activeStokTip, miktar, aciklama: aciklama || null,
     yapan: currentUser.name, yapan_id: currentUser.id
   });
 
