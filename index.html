@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_32.html -->
+<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_33.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -781,7 +781,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_32.html"></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_33.html"></div>
 </div>
 
 <script>
@@ -1180,6 +1180,12 @@ function readFileAsDataUrl(file, maxSizeMb){
     reader.readAsDataURL(file);
   });
 }
+function renderVideoLabel(elId, filename, onRemove){
+  const el = document.getElementById(elId);
+  if(!filename){ el.innerHTML = ''; return; }
+  el.innerHTML = `<span>🎥 ${escapeHtml(filename)}</span> <button type="button" data-remove-video style="border:none;background:var(--danger-soft);color:var(--danger);border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer;margin-left:6px;">✕ Kaldır</button>`;
+  el.querySelector('[data-remove-video]').addEventListener('click', onRemove);
+}
 async function handleFileInput(fileList, targetArray, stripId){
   const files = Array.from(fileList).slice(0, 5 - targetArray.length);
   for(const file of files){ try{ targetArray.push(await resizeImage(file)); } catch(e){ showToast('Fotoğraf işlenirken bir sorun oluştu.'); } }
@@ -1423,7 +1429,12 @@ document.getElementById('f_video').addEventListener('change', async (e)=>{
   if(!file) return;
   try{
     newVideo = await readFileAsDataUrl(file, 20);
-    document.getElementById('newVideoAdi').textContent = '🎥 ' + file.name;
+    renderVideoLabel('newVideoAdi', file.name, ()=>{
+      newVideo = null;
+      document.getElementById('f_video').value = '';
+      renderVideoLabel('newVideoAdi', null);
+      showToast('Video kaldırıldı.');
+    });
   }catch(err){ showToast(err.message || 'Video işlenirken bir sorun oluştu.'); e.target.value=''; newVideo = null; }
 });
 document.getElementById('f_video_cozum').addEventListener('change', async (e)=>{
@@ -1431,7 +1442,12 @@ document.getElementById('f_video_cozum').addEventListener('change', async (e)=>{
   if(!file) return;
   try{
     closeVideo = await readFileAsDataUrl(file, 20);
-    document.getElementById('closeVideoAdi').textContent = '🎥 ' + file.name;
+    renderVideoLabel('closeVideoAdi', file.name, ()=>{
+      closeVideo = null;
+      document.getElementById('f_video_cozum').value = '';
+      renderVideoLabel('closeVideoAdi', null);
+      showToast('Video kaldırıldı.');
+    });
   }catch(err){ showToast(err.message || 'Video işlenirken bir sorun oluştu.'); e.target.value=''; closeVideo = null; }
 });
 document.getElementById('lightboxClose').addEventListener('click', ()=>document.getElementById('lightbox').classList.remove('open'));
