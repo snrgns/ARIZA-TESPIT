@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_32.html -->
+<html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="file:///C:/Users/enter/Downloads/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#146C71">
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
 .trip-status.acik{background:var(--warn-soft);color:var(--warn);}
 .trip-status.kapali{background:var(--success-soft);color:var(--success);}
 </style>
-</head>
+<script src="./Enterlife Festival_files/supabase-js@2"></script></head>
 <body>
 <div id="app">
 
@@ -288,6 +288,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="tab-btn" data-tab="urunler">Dekor Katalog</div>
       <div class="tab-btn" data-tab="satinalma" id="satinAlmaTabBtn" style="display:none;">Satın Alma</div>
       <div class="tab-btn" data-tab="araclar" id="araclarTabBtn" style="display:none;">Araçlar</div>
+      <div class="tab-btn" data-tab="geribildirim">Geri Bildirim</div>
       <div class="tab-btn" data-tab="admin" id="adminTabBtn" style="display:none;">Yönetim Paneli</div>
     </div>
 
@@ -358,7 +359,22 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         <button class="btn-secondary" id="newAracBtn" style="margin-top:0;flex:1;">＋ Yeni Araç Ekle</button>
         <button class="btn-secondary" id="aracRaporBtn" style="margin-top:0;flex:1;">📄 Aylık Rapor</button>
       </div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn-secondary" id="yakitMaliyetRaporBtn" style="margin-top:0;flex:1;">⛽ Yakıt Maliyet Raporu</button>
+        <button class="btn-secondary" id="aracCsvBtn" style="margin-top:0;flex:1;">📊 Araç Verileri CSV</button>
+      </div>
       <div id="aracList" style="margin-top:14px;display:flex;flex-direction:column;gap:12px;"></div>
+    </div>
+
+    <div id="geriBildirimTab" style="display:none;padding:12px 16px 90px;">
+      <div class="admin-block" style="margin-bottom:14px;">
+        <div class="admin-block-title">💬 Görüş / Öneri / Şikayet</div>
+        <div style="font-size:12.5px;color:var(--ink-muted);line-height:1.4;margin-bottom:10px;">
+          İşle ilgili görüş, öneri veya şikayetini buradan iletebilirsin. Yönetici/Müdür bunu inceleyip değerlendirme yapacak.
+        </div>
+        <button class="btn-secondary" id="newGeriBildirimBtn" style="margin-top:0;">＋ Görüş Bildir</button>
+      </div>
+      <div id="geriBildirimList" style="display:flex;flex-direction:column;gap:10px;"></div>
     </div>
 
     <div id="adminTab" style="display:none;padding:14px 16px 40px;">
@@ -387,7 +403,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           Yapılan işleri ekipman adına göre gruplanmış, fotoğraflar dahil tek bir PDF olarak indirin.
         </div>
         <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:10px;">
-          <input type="checkbox" id="onlyClosedCheck" checked style="width:16px;height:16px;">
+          <input type="checkbox" id="onlyClosedCheck" checked="" style="width:16px;height:16px;">
           Sadece kapatılan (tamamlanan) kayıtlar
         </label>
         <button class="btn-primary" id="exportPdfBtn">📥 PDF Raporu İndir</button>
@@ -422,10 +438,16 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         <div class="field">
           <label>Fotoğraf</label>
           <label class="photo-add-btn" for="f_foto">📷 Fotoğraf Ekle</label>
-          <input type="file" id="f_foto" accept="image/*" multiple style="display:none;">
+          <input type="file" id="f_foto" accept="image/*" multiple="" style="display:none;">
           <div class="photo-strip" id="newPhotoStrip"></div>
         </div>
-        <div class="field"><label>Bildiren Kişi</label><input type="text" id="f_bildiren" disabled></div>
+        <div class="field">
+          <label>Video (opsiyonel, max 20MB — kısa tutulması önerilir)</label>
+          <label class="photo-add-btn" for="f_video">🎥 Video Ekle</label>
+          <input type="file" id="f_video" accept="video/*" style="display:none;">
+          <div id="newVideoAdi" style="font-size:12px;color:var(--ink-muted);margin-top:6px;"></div>
+        </div>
+        <div class="field"><label>Bildiren Kişi</label><input type="text" id="f_bildiren" disabled=""></div>
         <div class="field">
           <label>Öncelik</label>
           <div class="priority-picker" id="priorityPicker">
@@ -459,10 +481,16 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         <div class="field">
           <label>Fotoğraf</label>
           <label class="photo-add-btn" for="f_foto_cozum">📷 Fotoğraf Ekle</label>
-          <input type="file" id="f_foto_cozum" accept="image/*" multiple style="display:none;">
+          <input type="file" id="f_foto_cozum" accept="image/*" multiple="" style="display:none;">
           <div class="photo-strip" id="closePhotoStrip"></div>
         </div>
-        <div class="field"><label>Kapatan Kişi</label><input type="text" id="f_kapatan" disabled></div>
+        <div class="field">
+          <label>Video (opsiyonel, max 20MB)</label>
+          <label class="photo-add-btn" for="f_video_cozum">🎥 Video Ekle</label>
+          <input type="file" id="f_video_cozum" accept="video/*" style="display:none;">
+          <div id="closeVideoAdi" style="font-size:12px;color:var(--ink-muted);margin-top:6px;"></div>
+        </div>
+        <div class="field"><label>Kapatan Kişi</label><input type="text" id="f_kapatan" disabled=""></div>
         <button class="btn-danger" id="submitClose">Arızayı Giderildi Olarak Kapat</button>
       </div>
     </div>
@@ -498,13 +526,19 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Yeni Ürün Ekle</div><button class="sheet-close" data-close="yeniUrunOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Bölüm</label><input type="text" id="f_urun_bolum" disabled></div>
+        <div class="field"><label>Bölüm</label><input type="text" id="f_urun_bolum" disabled=""></div>
         <div class="field"><label>Ürün / Ekipman Adı *</label><input type="text" id="f_urun_ad" placeholder="örn. CNC Torna Tezgahı #3"></div>
         <div class="field">
           <label>Fotoğraf</label>
           <label class="photo-add-btn" for="f_urun_foto">📷 Fotoğraf Seç</label>
           <input type="file" id="f_urun_foto" accept="image/*" style="display:none;">
           <div class="photo-strip" id="urunPhotoStrip"></div>
+        </div>
+        <div class="field">
+          <label>PDF Dosyası (opsiyonel — katalog, kullanım kılavuzu vb.)</label>
+          <label class="photo-add-btn" for="f_urun_pdf">📄 PDF Seç</label>
+          <input type="file" id="f_urun_pdf" accept="application/pdf" style="display:none;">
+          <div id="urunPdfAdi" style="font-size:12px;color:var(--ink-muted);margin-top:6px;"></div>
         </div>
         <button class="btn-primary" id="submitUrun">Ürünü Kaydet</button>
       </div>
@@ -526,8 +560,8 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title" id="stokIslemTitle">Stok İşlemi</div><button class="sheet-close" data-close="stokIslemOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Ürün</label><input type="text" id="f_stok_urun" disabled></div>
-        <div class="field"><label>Mevcut Stok</label><input type="text" id="f_stok_mevcut" disabled></div>
+        <div class="field"><label>Ürün</label><input type="text" id="f_stok_urun" disabled=""></div>
+        <div class="field"><label>Mevcut Stok</label><input type="text" id="f_stok_mevcut" disabled=""></div>
         <div class="field"><label id="stokMiktarLabel">Miktar *</label><input type="number" id="f_stok_miktar" min="1" value="1"></div>
         <div class="field"><label id="stokAciklamaLabel">Açıklama</label><textarea id="f_stok_aciklama" rows="3" placeholder="örn. Hangi arıza/işlem için kullanıldı"></textarea></div>
         <button class="btn-primary" id="submitStokIslem">Onayla</button>
@@ -570,7 +604,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Araç Çıkış Kaydı</div><button class="sheet-close" data-close="aracCikisOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Araç</label><input type="text" id="f_cikis_arac" disabled></div>
+        <div class="field"><label>Araç</label><input type="text" id="f_cikis_arac" disabled=""></div>
         <div class="field"><label>Kullanan Kişi *</label><input type="text" id="f_cikis_kullanan" placeholder="Ad Soyad"></div>
         <div class="field"><label>Başlangıç Yeri *</label><input type="text" id="f_cikis_baslangic" placeholder="örn. Depo / Merkez Ofis"></div>
         <div class="field"><label>Gidilecek Yer *</label><input type="text" id="f_cikis_yer" placeholder="örn. Müşteri X - Ataşehir"></div>
@@ -601,7 +635,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Yakıt Alım Kaydı</div><button class="sheet-close" data-close="yakitAlimOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Araç</label><input type="text" id="f_yakit_arac" disabled></div>
+        <div class="field"><label>Araç</label><input type="text" id="f_yakit_arac" disabled=""></div>
         <div style="display:flex;gap:10px;">
           <div class="field" style="flex:1;"><label>Litre *</label><input type="number" id="f_yakit_litre" min="0" step="0.01" placeholder="örn. 45.5"></div>
           <div class="field" style="flex:1;"><label>KM *</label><input type="number" id="f_yakit_km" min="0"></div>
@@ -650,6 +684,31 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   <!-- YENİ KULLANICI SHEET -->
   <!-- YENİ MALZEME SHEET (fotoğraf/bölüm gerekmez) -->
   <!-- SATIN ALMA TALEBİ SHEET -->
+  <!-- GERİ BİLDİRİM SHEET -->
+  <div class="overlay" id="yeniGeriBildirimOverlay">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header"><div class="sheet-title">Görüş / Öneri Bildir</div><button class="sheet-close" data-close="yeniGeriBildirimOverlay">✕</button></div>
+      <div class="sheet-content">
+        <div class="field"><label>Başlık *</label><input type="text" id="f_gb_baslik" placeholder="örn. Vardiya düzeni hakkında"></div>
+        <div class="field"><label>Açıklama *</label><textarea id="f_gb_aciklama" rows="5" placeholder="Görüşünü/önerini detaylı yaz"></textarea></div>
+        <button class="btn-primary" id="submitGeriBildirim">Gönder</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEĞERLENDİRME SHEET -->
+  <div class="overlay" id="degerlendirmeOverlay">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header"><div class="sheet-title">Değerlendirme Yap</div><button class="sheet-close" data-close="degerlendirmeOverlay">✕</button></div>
+      <div class="sheet-content">
+        <div class="field"><label>Değerlendirme *</label><textarea id="f_degerlendirme" rows="5" placeholder="Bu görüş hakkında değerlendirmenizi yazın"></textarea></div>
+        <button class="btn-primary" id="submitDegerlendirme">Değerlendirmeyi Kaydet</button>
+      </div>
+    </div>
+  </div>
+
   <div class="overlay" id="yeniTalepOverlay">
     <div class="sheet">
       <div class="sheet-handle"></div>
@@ -722,7 +781,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src=""></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_32.html"></div>
 </div>
 
 <script>
@@ -849,12 +908,17 @@ let selectedPriority = 'yuksek';
 let activeTicketId = null;
 let newPhotos = [];
 let closePhotos = [];
+let newVideo = null;
+let closeVideo = null;
 let newProductPhoto = null;
+let newProductPdf = null;
 let activeBolumIdForNewUrun = null;
 let pendingUserPhotos = {};
 let ARACLAR = { araclar: [], hareketler: [] };
 let YAKIT_ALIMLARI = [];
 let SATIN_ALMA_TALEPLERI = [];
+let GERI_BILDIRIMLER = [];
+let activeGeriBildirimId = null;
 let talepPhoto = null;
 let newAracPhoto = null;
 let cikisPhoto = null;
@@ -912,7 +976,7 @@ async function loadData(){
       olusturmaTarihi: t.olusturma_tarihi, kapanisTarihi: t.kapanis_tarihi,
       cozum: t.cozum, kapatan: t.kapatan, kapatanId: t.kapatan_id,
       atanan: t.atanan, atananId: t.atanan_id,
-      fotograflar: t.fotograflar || [], cozumFotograflari: t.cozum_fotograflari || []
+      fotograflar: t.fotograflar || [], cozumFotograflari: t.cozum_fotograflari || [], video: t.video, cozumVideo: t.cozum_video
     }));
   }
   const { data: notifs, error: e2 } = await sb.from('bildirimler').select('*').order('created_at', { ascending:false });
@@ -932,11 +996,20 @@ async function loadSatinAlmaTalepleri(){
     olusturmaTarihi: t.olusturma_tarihi
   })) : [];
 }
+async function loadGeriBildirimler(){
+  const { data, error } = await sb.from('geri_bildirimler').select('*').order('olusturma_tarihi', { ascending:false });
+  GERI_BILDIRIMLER = (!error && data) ? data.map(g=>({
+    id: g.id, baslik: g.baslik, aciklama: g.aciklama,
+    gonderen: g.gonderen, gonderenId: g.gonderen_id, durum: g.durum,
+    degerlendirme: g.degerlendirme, degerlendiren: g.degerlendiren, degerlendirenId: g.degerlendiren_id,
+    olusturmaTarihi: g.olusturma_tarihi, degerlendirmeTarihi: g.degerlendirme_tarihi
+  })) : [];
+}
 async function loadProducts(){
   const { data: bol, error: e1 } = await sb.from('bolumler').select('*');
   const { data: ur, error: e2 } = await sb.from('urunler').select('*');
   PRODUCTS.bolumler = (!e1 && bol) ? bol.map(b=>({ id:b.id, ad:b.ad })) : [];
-  PRODUCTS.urunler = (!e2 && ur) ? ur.map(u=>({ id:u.id, ad:u.ad, bolumId:u.bolum_id, foto:u.foto, stok:u.stok ?? 0, minStok:u.min_stok ?? 0 })) : [];
+  PRODUCTS.urunler = (!e2 && ur) ? ur.map(u=>({ id:u.id, ad:u.ad, bolumId:u.bolum_id, foto:u.foto, pdf:u.pdf, stok:u.stok ?? 0, minStok:u.min_stok ?? 0 })) : [];
 }
 async function loadAraclar(){
   const { data: ar, error: e1 } = await sb.from('araclar').select('*').order('created_at', { ascending:true });
@@ -1066,12 +1139,14 @@ function switchTab(tab){
   document.getElementById('urunlerTab').style.display = tab==='urunler' ? 'block' : 'none';
   document.getElementById('satinAlmaTab').style.display = tab==='satinalma' ? 'block' : 'none';
   document.getElementById('araclarTab').style.display = tab==='araclar' ? 'block' : 'none';
+  document.getElementById('geriBildirimTab').style.display = tab==='geribildirim' ? 'block' : 'none';
   document.getElementById('adminTab').style.display = tab==='admin' ? 'block' : 'none';
   if(tab==='genelbakis') renderGenelBakis();
   if(tab==='admin') renderAdmin();
   if(tab==='urunler') renderUrunler();
   if(tab==='satinalma') renderSatinAlma();
   if(tab==='araclar') renderAraclar();
+  if(tab==='geribildirim') renderGeriBildirim();
 }
 document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click', ()=>switchTab(btn.dataset.tab)));
 
@@ -1091,6 +1166,18 @@ function resizeImage(file){
       img.onerror = reject; img.src = e.target.result;
     };
     reader.onerror = reject; reader.readAsDataURL(file);
+  });
+}
+function readFileAsDataUrl(file, maxSizeMb){
+  return new Promise((resolve, reject)=>{
+    if(maxSizeMb && file.size > maxSizeMb * 1024 * 1024){
+      reject(new Error(`Dosya çok büyük (max ${maxSizeMb}MB)`));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e)=>resolve(e.target.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
   });
 }
 async function handleFileInput(fileList, targetArray, stripId){
@@ -1244,12 +1331,14 @@ function openDetail(id){
     <div class="section-label">Arıza Açıklaması</div>
     <div class="detail-desc-box">${escapeHtml(t.aciklama)}</div>
     ${(t.fotograflar && t.fotograflar.length) ? `<div class="detail-photo-grid">${t.fotograflar.map(src=>`<img data-src="${src}">`).join('')}</div>` : ''}
+    ${t.video ? `<video controls style="width:100%;border-radius:9px;margin-top:8px;background:#000;"><source src="${t.video}"></video>` : ''}
   `;
   if(t.durum === 'kapali'){
     html += `
       <div class="section-label">Çözüm</div>
       <div class="detail-desc-box">${escapeHtml(t.cozum)}</div>
       ${(t.cozumFotograflari && t.cozumFotograflari.length) ? `<div class="detail-photo-grid">${t.cozumFotograflari.map(src=>`<img data-src="${src}">`).join('')}</div>` : ''}
+      ${t.cozumVideo ? `<video controls style="width:100%;border-radius:9px;margin-top:8px;background:#000;"><source src="${t.cozumVideo}"></video>` : ''}
       <div class="detail-row" style="margin-top:6px;"><span class="k">Kapatan</span><span class="v">${escapeHtml(t.kapatan) || '—'}</span></div>
       <div class="detail-row"><span class="k">Kapanış Tarihi</span><span class="v">${formatDate(t.kapanisTarihi)}</span></div>
       ${canClose() ? `<button class="btn-secondary" id="reopenBtn">Kaydı Yeniden Aç</button>` : ''}
@@ -1283,15 +1372,18 @@ function openDetail(id){
     document.getElementById('f_cozum').value='';
     closePhotos = []; renderPhotoStrip(closePhotos, 'closePhotoStrip');
     document.getElementById('f_foto_cozum').value = '';
+    closeVideo = null;
+    document.getElementById('closeVideoAdi').textContent = '';
+    document.getElementById('f_video_cozum').value = '';
     document.getElementById('closeOverlay').classList.add('open');
   });
   const reopenBtn = document.getElementById('reopenBtn');
   if(reopenBtn) reopenBtn.addEventListener('click', async ()=>{
     const { error } = await sb.from('arizalar').update({
-      durum: 'acik', cozum: null, kapatan: null, kapatan_id: null, kapanis_tarihi: null, cozum_fotograflari: []
+      durum: 'acik', cozum: null, kapatan: null, kapatan_id: null, kapanis_tarihi: null, cozum_fotograflari: [], cozum_video: null
     }).eq('id', t.id);
     if(error){ showToast('Kayıt yeniden açılırken bir sorun oluştu.'); return; }
-    t.durum = 'acik'; t.cozum = null; t.kapatan = null; t.kapanisTarihi = null; t.cozumFotograflari = [];
+    t.durum = 'acik'; t.cozum = null; t.kapatan = null; t.kapanisTarihi = null; t.cozumFotograflari = []; t.cozumVideo = null;
     document.getElementById('detailOverlay').classList.remove('open');
     renderList(); showToast('Kayıt yeniden açıldı.');
   });
@@ -1313,6 +1405,9 @@ document.getElementById('newFab').addEventListener('click', ()=>{
   selectedPriority = 'yuksek'; newPhotos = [];
   renderPhotoStrip(newPhotos, 'newPhotoStrip');
   document.getElementById('f_foto').value = '';
+  newVideo = null;
+  document.getElementById('newVideoAdi').textContent = '';
+  document.getElementById('f_video').value = '';
   document.querySelectorAll('.priority-opt').forEach(el=>el.className='priority-opt' + (el.dataset.p==='yuksek' ? ' sel-yuksek':''));
   document.getElementById('newOverlay').classList.add('open');
 });
@@ -1323,6 +1418,22 @@ document.getElementById('priorityPicker').addEventListener('click', (e)=>{
 });
 document.getElementById('f_foto').addEventListener('change', (e)=>handleFileInput(e.target.files, newPhotos, 'newPhotoStrip'));
 document.getElementById('f_foto_cozum').addEventListener('change', (e)=>handleFileInput(e.target.files, closePhotos, 'closePhotoStrip'));
+document.getElementById('f_video').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    newVideo = await readFileAsDataUrl(file, 20);
+    document.getElementById('newVideoAdi').textContent = '🎥 ' + file.name;
+  }catch(err){ showToast(err.message || 'Video işlenirken bir sorun oluştu.'); e.target.value=''; newVideo = null; }
+});
+document.getElementById('f_video_cozum').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    closeVideo = await readFileAsDataUrl(file, 20);
+    document.getElementById('closeVideoAdi').textContent = '🎥 ' + file.name;
+  }catch(err){ showToast(err.message || 'Video işlenirken bir sorun oluştu.'); e.target.value=''; closeVideo = null; }
+});
 document.getElementById('lightboxClose').addEventListener('click', ()=>document.getElementById('lightbox').classList.remove('open'));
 document.getElementById('lightbox').addEventListener('click', (e)=>{ if(e.target.id==='lightbox') document.getElementById('lightbox').classList.remove('open'); });
 
@@ -1371,7 +1482,7 @@ document.getElementById('submitNew').addEventListener('click', async ()=>{
     ekipman, konum, aciklama,
     bildiren: currentUser.name, bildiren_id: currentUser.id,
     oncelik: selectedPriority, durum: 'acik',
-    fotograflar: [...newPhotos], cozum_fotograflari: []
+    fotograflar: [...newPhotos], cozum_fotograflari: [], video: newVideo
   };
   const { data, error } = await sb.from('arizalar').insert(insertPayload).select().single();
   if(error || !data){ showToast('Kayıt oluşturulurken bir sorun oluştu.'); return; }
@@ -1381,7 +1492,7 @@ document.getElementById('submitNew').addEventListener('click', async ()=>{
     oncelik: selectedPriority, durum: 'acik',
     olusturmaTarihi: data.olusturma_tarihi, kapanisTarihi: null,
     cozum: null, kapatan: null, kapatanId: null,
-    fotograflar: [...newPhotos], cozumFotograflari: []
+    fotograflar: [...newPhotos], cozumFotograflari: [], video: newVideo, cozumVideo: null
   };
   DATA.tickets.unshift(newTicket);
   await pushNotification(newTicket);
@@ -1399,11 +1510,11 @@ document.getElementById('submitClose').addEventListener('click', async ()=>{
     const kapanisTarihi = new Date().toISOString();
     const { error } = await sb.from('arizalar').update({
       durum: 'kapali', cozum, kapatan: currentUser.name, kapatan_id: currentUser.id,
-      kapanis_tarihi: kapanisTarihi, cozum_fotograflari: [...closePhotos]
+      kapanis_tarihi: kapanisTarihi, cozum_fotograflari: [...closePhotos], cozum_video: closeVideo
     }).eq('id', t.id);
     if(error){ showToast('Kayıt kapatılırken bir sorun oluştu.'); return; }
     t.durum = 'kapali'; t.cozum = cozum; t.kapatan = currentUser.name; t.kapatanId = currentUser.id;
-    t.kapanisTarihi = kapanisTarihi; t.cozumFotograflari = [...closePhotos];
+    t.kapanisTarihi = kapanisTarihi; t.cozumFotograflari = [...closePhotos]; t.cozumVideo = closeVideo;
     await pushGenericNotification('ariza_kapatildi', `<b>${escapeHtml(currentUser.name)}</b>, ARZ-${pad(t.id)} (${escapeHtml(t.ekipman)}) kaydını kapattı`, { ticketId: t.id });
   }
   document.getElementById('closeOverlay').classList.remove('open');
@@ -1435,7 +1546,8 @@ function updateBellBadge(){
 }
 const NOTIF_ICONS = {
   ariza: '🔧', satin_alma: '🛒', ariza_kapatildi: '✅', stok: '📦',
-  arac_cikis: '🚗', arac_donus: '✅', talep_durum: '📋', yakit_alim: '⛽'
+  arac_cikis: '🚗', arac_donus: '✅', talep_durum: '📋', yakit_alim: '⛽',
+  geri_bildirim: '💬', degerlendirme: '📝'
 };
 function renderNotifList(){
   const list = relevantNotifs();
@@ -1462,6 +1574,7 @@ function renderNotifList(){
       if(item.dataset.talep){ switchTab('satinalma'); }
       else if(tip === 'stok' || tip === 'talep_durum'){ switchTab('satinalma'); }
       else if(tip === 'arac_cikis' || tip === 'arac_donus' || tip === 'yakit_alim'){ switchTab('araclar'); }
+      else if(tip === 'geri_bildirim' || tip === 'degerlendirme'){ switchTab('geribildirim'); }
       else { openDetail(parseInt(item.dataset.ticket)); }
     });
   });
@@ -1525,6 +1638,7 @@ function renderUrunler(){
                 ${isAdmin ? `<div class="urun-del" data-del-urun="${u.id}">✕</div>` : ''}
                 ${u.foto ? `<img class="urun-photo" src="${u.foto}">` : `<div class="urun-photo-empty">📦</div>`}
                 <div class="urun-name">${escapeHtml(u.ad)}</div>
+                ${u.pdf ? `<a href="${u.pdf}" download="${escapeHtml(u.ad)}.pdf" style="display:block;font-size:10.5px;font-weight:700;color:var(--accent);text-decoration:none;margin-top:2px;">📄 PDF</a>` : ''}
               </div>
             `).join('')}
           </div>
@@ -1546,6 +1660,9 @@ function renderUrunler(){
       newProductPhoto = null;
       renderPhotoStrip([], 'urunPhotoStrip');
       document.getElementById('f_urun_foto').value = '';
+      newProductPdf = null;
+      document.getElementById('urunPdfAdi').textContent = '';
+      document.getElementById('f_urun_pdf').value = '';
       document.getElementById('yeniUrunOverlay').classList.add('open');
     });
   });
@@ -1573,7 +1690,7 @@ function renderUrunler(){
   });
   el.querySelectorAll('.urun-card').forEach(card=>{
     card.addEventListener('click', (e)=>{
-      if(e.target.closest('.urun-del')) return;
+      if(e.target.closest('.urun-del') || e.target.closest('a')) return;
       const u = PRODUCTS.urunler.find(x=>x.id===card.dataset.urun);
       if(u && u.foto) openLightbox(u.foto);
     });
@@ -1605,14 +1722,23 @@ document.getElementById('f_urun_foto').addEventListener('change', async (e)=>{
   }catch(err){ showToast('Fotoğraf işlenirken bir sorun oluştu.'); }
 });
 
+document.getElementById('f_urun_pdf').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    newProductPdf = await readFileAsDataUrl(file, 8);
+    document.getElementById('urunPdfAdi').textContent = '📄 ' + file.name;
+  }catch(err){ showToast(err.message || 'PDF işlenirken bir sorun oluştu.'); e.target.value=''; }
+});
+
 document.getElementById('submitUrun').addEventListener('click', async ()=>{
   const ad = document.getElementById('f_urun_ad').value.trim();
   if(!ad){ showToast('Ürün adı zorunludur.'); return; }
   if(!activeBolumIdForNewUrun){ showToast('Bölüm bulunamadı.'); return; }
   const id = 'p'+Date.now();
-  const { error } = await sb.from('urunler').insert({ id, ad, bolum_id: activeBolumIdForNewUrun, foto: newProductPhoto, stok: 0, min_stok: 0 });
+  const { error } = await sb.from('urunler').insert({ id, ad, bolum_id: activeBolumIdForNewUrun, foto: newProductPhoto, pdf: newProductPdf, stok: 0, min_stok: 0 });
   if(error){ showToast('Ürün kaydedilirken bir sorun oluştu.'); return; }
-  PRODUCTS.urunler.push({ id, ad, bolumId: activeBolumIdForNewUrun, foto: newProductPhoto, stok: 0, minStok: 0 });
+  PRODUCTS.urunler.push({ id, ad, bolumId: activeBolumIdForNewUrun, foto: newProductPhoto, pdf: newProductPdf, stok: 0, minStok: 0 });
   document.getElementById('yeniUrunOverlay').classList.remove('open');
   renderUrunler();
   showToast('Ürün kataloğa eklendi: ' + ad);
@@ -1667,6 +1793,81 @@ document.getElementById('submitStokIslem').addEventListener('click', async ()=>{
 
 /* ---------------- SATIN ALMA ---------------- */
 /* ---------------- SATIN ALMA TALEPLERİ ---------------- */
+/* ---------------- GERİ BİLDİRİM ---------------- */
+function renderGeriBildirim(){
+  const el = document.getElementById('geriBildirimList');
+  const canEvaluate = currentUser && (currentUser.role === 'admin' || currentUser.role === 'mudur');
+  const sorted = [...GERI_BILDIRIMLER].sort((a,b)=> new Date(b.olusturmaTarihi) - new Date(a.olusturmaTarihi));
+  if(sorted.length === 0){
+    el.innerHTML = `<div class="notif-empty">Henüz görüş/öneri bildirilmemiş.</div>`;
+    return;
+  }
+  const durumLabel = { bekliyor:'Bekliyor', degerlendirildi:'Değerlendirildi' };
+  el.innerHTML = sorted.map(g=>`
+    <div class="trip-item" data-gb="${g.id}">
+      <div class="trip-top">
+        <b>${escapeHtml(g.baslik)}</b>
+        <span class="trip-status ${g.durum==='degerlendirildi' ? 'kapali' : 'acik'}">${durumLabel[g.durum]}</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--ink);margin-bottom:4px;">${escapeHtml(g.aciklama)}</div>
+      <div style="font-size:11.5px;color:var(--ink-muted);">Gönderen: ${escapeHtml(g.gonderen)||'—'} · ${formatDate(g.olusturmaTarihi)}</div>
+      ${g.degerlendirme ? `
+        <div class="detail-desc-box" style="margin-top:8px;">
+          <b>Değerlendirme (${escapeHtml(g.degerlendiren)||'—'}):</b><br>${escapeHtml(g.degerlendirme)}
+        </div>
+      ` : ''}
+      ${(canEvaluate && g.durum==='bekliyor') ? `<button class="btn-secondary" data-degerlendir="${g.id}">📝 Değerlendirme Yap</button>` : ''}
+    </div>
+  `).join('');
+  el.querySelectorAll('[data-degerlendir]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeGeriBildirimId = btn.dataset.degerlendir;
+      document.getElementById('f_degerlendirme').value = '';
+      document.getElementById('degerlendirmeOverlay').classList.add('open');
+    });
+  });
+}
+
+document.getElementById('newGeriBildirimBtn').addEventListener('click', ()=>{
+  document.getElementById('f_gb_baslik').value = '';
+  document.getElementById('f_gb_aciklama').value = '';
+  document.getElementById('yeniGeriBildirimOverlay').classList.add('open');
+});
+
+document.getElementById('submitGeriBildirim').addEventListener('click', async ()=>{
+  const baslik = document.getElementById('f_gb_baslik').value.trim();
+  const aciklama = document.getElementById('f_gb_aciklama').value.trim();
+  if(!baslik || !aciklama){ showToast('Başlık ve açıklama zorunludur.'); return; }
+  const id = 'gb' + Date.now();
+  const olusturmaTarihi = new Date().toISOString();
+  const { error } = await sb.from('geri_bildirimler').insert({
+    id, baslik, aciklama, gonderen: currentUser.name, gonderen_id: currentUser.id, durum: 'bekliyor'
+  });
+  if(error){ showToast('Görüş gönderilirken bir sorun oluştu.'); return; }
+  GERI_BILDIRIMLER.unshift({ id, baslik, aciklama, gonderen: currentUser.name, gonderenId: currentUser.id, durum:'bekliyor', degerlendirme:null, degerlendiren:null, olusturmaTarihi, degerlendirmeTarihi:null });
+  await pushGenericNotification('geri_bildirim', `<b>${escapeHtml(currentUser.name)}</b> yeni bir görüş bildirdi: ${escapeHtml(baslik)}`);
+  document.getElementById('yeniGeriBildirimOverlay').classList.remove('open');
+  renderGeriBildirim();
+  showToast('Görüşün gönderildi.');
+});
+
+document.getElementById('submitDegerlendirme').addEventListener('click', async ()=>{
+  const g = GERI_BILDIRIMLER.find(x=>x.id===activeGeriBildirimId);
+  if(!g) return;
+  const degerlendirme = document.getElementById('f_degerlendirme').value.trim();
+  if(!degerlendirme){ showToast('Değerlendirme metni zorunludur.'); return; }
+  const degerlendirmeTarihi = new Date().toISOString();
+  const { error } = await sb.from('geri_bildirimler').update({
+    durum: 'degerlendirildi', degerlendirme, degerlendiren: currentUser.name, degerlendiren_id: currentUser.id, degerlendirme_tarihi: degerlendirmeTarihi
+  }).eq('id', g.id);
+  if(error){ showToast('Değerlendirme kaydedilirken bir sorun oluştu.'); return; }
+  g.durum = 'degerlendirildi'; g.degerlendirme = degerlendirme; g.degerlendiren = currentUser.name; g.degerlendirmeTarihi = degerlendirmeTarihi;
+  await pushGenericNotification('degerlendirme', `<b>${escapeHtml(currentUser.name)}</b>, "${escapeHtml(g.baslik)}" görüşünü değerlendirdi`);
+  document.getElementById('degerlendirmeOverlay').classList.remove('open');
+  renderGeriBildirim();
+  showToast('Değerlendirme kaydedildi.');
+});
+
 function renderTalepler(){
   const el = document.getElementById('talepList');
   const isAdmin = currentUser && currentUser.role === 'admin';
@@ -2184,6 +2385,9 @@ function openYeniArizaForAracc(a){
   newPhotos = [];
   renderPhotoStrip(newPhotos, 'newPhotoStrip');
   document.getElementById('f_foto').value = '';
+  newVideo = null;
+  document.getElementById('newVideoAdi').textContent = '';
+  document.getElementById('f_video').value = '';
   document.querySelectorAll('.priority-opt').forEach(el=>el.className='priority-opt' + (el.dataset.p==='yuksek' ? ' sel-yuksek':''));
   document.getElementById('newOverlay').classList.add('open');
 }
@@ -2551,6 +2755,7 @@ async function generateKatalogPdf(onlyBolumId){
 
   showToast('PDF hazırlanıyor, lütfen bekleyin…');
 
+  // 1) Kapak / özet sayfası (sadece metin)
   const container = document.createElement('div');
   container.style.position = 'fixed';
   container.style.left = '-9999px';
@@ -2568,18 +2773,11 @@ async function generateKatalogPdf(onlyBolumId){
 
   bolumlerToInclude.forEach(b=>{
     const urunler = PRODUCTS.urunler.filter(u=>u.bolumId===b.id);
-    html += `<div style="font-size:17px;font-weight:700;background:#E3EEEE;color:#0E4F53;padding:8px 12px;border-radius:6px;margin:22px 0 12px;">${escapeHtml(b.ad)}</div>`;
+    html += `<div style="font-size:17px;font-weight:700;background:#E3EEEE;color:#0E4F53;padding:8px 12px;border-radius:6px;margin:22px 0 10px;">${escapeHtml(b.ad)}</div>`;
     if(urunler.length === 0){
-      html += `<div style="font-size:12.5px;color:#6B7680;margin-bottom:10px;">Bu bölümde ürün yok.</div>`;
+      html += `<div style="font-size:12.5px;color:#6B7680;">Bu bölümde ürün yok.</div>`;
     } else {
-      html += `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:10px;">`;
-      urunler.forEach(u=>{
-        html += `<div style="border:1px solid #DCE1E6;border-radius:8px;padding:10px;text-align:center;">
-          ${u.foto ? `<img src="${u.foto}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;">` : `<div style="width:100%;aspect-ratio:1;background:#EEF1F3;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:22px;">📦</div>`}
-          <div style="font-size:12px;font-weight:600;margin-top:6px;">${escapeHtml(u.ad)}</div>
-        </div>`;
-      });
-      html += `</div>`;
+      html += `<div style="font-size:13px;line-height:2;">${urunler.map(u=>escapeHtml(u.ad)).join(' · ')}</div>`;
     }
   });
 
@@ -2587,27 +2785,57 @@ async function generateKatalogPdf(onlyBolumId){
   document.body.appendChild(container);
 
   try{
-    const canvas = await html2canvas(container, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pageWidthMm = 210, pageHeightMm = 297;
+
+    const canvas = await html2canvas(container, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
     const ratio = pageWidthMm / canvas.width;
     const pageHeightPx = Math.floor(pageHeightMm / ratio);
     let renderedPx = 0;
     let firstPage = true;
-
     while(renderedPx < canvas.height){
       const sliceHeightPx = Math.min(pageHeightPx, canvas.height - renderedPx);
       const pageCanvas = document.createElement('canvas');
       pageCanvas.width = canvas.width;
       pageCanvas.height = sliceHeightPx;
-      const ctx = pageCanvas.getContext('2d');
-      ctx.drawImage(canvas, 0, renderedPx, canvas.width, sliceHeightPx, 0, 0, canvas.width, sliceHeightPx);
+      pageCanvas.getContext('2d').drawImage(canvas, 0, renderedPx, canvas.width, sliceHeightPx, 0, 0, canvas.width, sliceHeightPx);
       const imgData = pageCanvas.toDataURL('image/jpeg', 0.85);
       if(!firstPage) pdf.addPage();
       pdf.addImage(imgData, 'JPEG', 0, 0, pageWidthMm, sliceHeightPx * ratio);
       renderedPx += sliceHeightPx;
       firstPage = false;
+    }
+    document.body.removeChild(container);
+
+    // 2) Her ürün fotoğrafı için tam A4 sayfa
+    const marginMm = 15;
+    const usableWidth = pageWidthMm - marginMm*2;
+    const captionHeight = 14;
+    const usableHeight = pageHeightMm - marginMm*2 - captionHeight;
+
+    for(const b of bolumlerToInclude){
+      const urunler = PRODUCTS.urunler.filter(u=>u.bolumId===b.id && u.foto);
+      for(const u of urunler){
+        const dims = await new Promise((resolve)=>{
+          const img = new Image();
+          img.onload = ()=>resolve({ w: img.naturalWidth || 1, h: img.naturalHeight || 1 });
+          img.onerror = ()=>resolve({ w:1, h:1 });
+          img.src = u.foto;
+        });
+        let drawW = usableWidth, drawH = (dims.h / dims.w) * drawW;
+        if(drawH > usableHeight){ drawH = usableHeight; drawW = (dims.w / dims.h) * drawH; }
+        const offsetX = marginMm + (usableWidth - drawW) / 2;
+        const offsetY = marginMm + captionHeight + (usableHeight - drawH) / 2;
+
+        pdf.addPage();
+        pdf.setFontSize(13);
+        pdf.setTextColor(14, 79, 83);
+        pdf.text(`${b.ad} — ${u.ad}`, marginMm, marginMm + 6);
+        try{
+          pdf.addImage(u.foto, 'JPEG', offsetX, offsetY, drawW, drawH);
+        }catch(imgErr){ /* bozuk fotoğrafı atla */ }
+      }
     }
 
     const dosyaAdi = onlyBolumId ? `katalog-${bolumlerToInclude[0].ad.toLowerCase().replace(/[^a-z0-9ğüşıöç]+/gi,'-')}` : 'urun-katalogu';
@@ -2616,7 +2844,7 @@ async function generateKatalogPdf(onlyBolumId){
   }catch(e){
     showToast('PDF oluşturulurken bir sorun oluştu.');
   }finally{
-    document.body.removeChild(container);
+    if(container.parentNode) document.body.removeChild(container);
   }
 }
 
@@ -2731,6 +2959,106 @@ async function generateAracRaporu(){
 
 document.getElementById('aracRaporBtn').addEventListener('click', generateAracRaporu);
 
+/* ---------------- YAKIT MALİYET RAPORU ---------------- */
+async function generateYakitMaliyetRaporu(){
+  showToast('PDF kütüphaneleri yükleniyor…');
+  try{ await ensurePdfLibsLoaded(); }
+  catch(e){ showToast('PDF kütüphaneleri yüklenemedi. İnternet bağlantınızı kontrol edin.'); return; }
+  if(ARACLAR.araclar.length === 0){ showToast('Henüz araç eklenmedi.'); return; }
+
+  showToast('Rapor hazırlanıyor, lütfen bekleyin…');
+
+  const container = document.createElement('div');
+  container.style.position = 'fixed'; container.style.left = '-9999px'; container.style.top = '0';
+  container.style.width = '800px'; container.style.background = '#ffffff'; container.style.padding = '30px';
+  container.style.fontFamily = "'IBM Plex Sans', sans-serif"; container.style.color = '#1B232C';
+
+  let toplamMaliyetGenel = 0, toplamKmGenel = 0, toplamLitreGenel = 0;
+  const satirlar = ARACLAR.araclar.map(a=>{
+    const kayitlar = YAKIT_ALIMLARI.filter(y=>y.aracId===a.id).sort((x,y)=>x.km-y.km);
+    let toplamMaliyet = 0, toplamLitre = 0, toplamKm = 0;
+    for(let i=1;i<kayitlar.length;i++){
+      const km = kayitlar[i].km - kayitlar[i-1].km;
+      if(km > 0){ toplamKm += km; }
+    }
+    kayitlar.forEach(y=>{ toplamMaliyet += (y.tutar||0); toplamLitre += (y.litre||0); });
+    toplamMaliyetGenel += toplamMaliyet; toplamKmGenel += toplamKm; toplamLitreGenel += toplamLitre;
+    const maliyetKm = toplamKm > 0 ? (toplamMaliyet / toplamKm) : null;
+    const litre100km = toplamKm > 0 ? (toplamLitre / toplamKm * 100) : null;
+    return { a, kayitSayisi: kayitlar.length, toplamMaliyet, toplamLitre, toplamKm, maliyetKm, litre100km };
+  });
+
+  let html = `<div style="border-bottom:3px solid #146C71;padding-bottom:14px;margin-bottom:18px;">
+    <div style="font-size:22px;font-weight:700;">Yakıt Maliyet Raporu</div>
+    <div style="font-size:12px;color:#6B7680;margin-top:4px;">Oluşturulma: ${formatDate(new Date().toISOString())}</div>
+    <div style="font-size:13px;color:#146C71;font-weight:700;margin-top:8px;">Toplam Maliyet: ${toplamMaliyetGenel.toFixed(2)} ₺ · Toplam ${toplamLitreGenel.toFixed(1)} litre · Toplam ${toplamKmGenel} km</div>
+  </div>`;
+
+  satirlar.forEach(({a, kayitSayisi, toplamMaliyet, toplamLitre, toplamKm, maliyetKm, litre100km})=>{
+    html += `<div style="border:1px solid #DCE1E6;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+      <div style="font-size:15px;font-weight:700;margin-bottom:6px;">${escapeHtml(a.plaka)} ${a.model ? '· ' + escapeHtml(a.model) : ''}</div>
+      <div style="font-size:12.5px;color:#6B7680;line-height:1.6;">
+        Yakıt alım sayısı: ${kayitSayisi}<br>
+        Toplam yakıt maliyeti: <b>${toplamMaliyet.toFixed(2)} ₺</b><br>
+        Toplam litre: ${toplamLitre.toFixed(1)} L · Kat edilen km: ${toplamKm}<br>
+        ${maliyetKm !== null ? `<b>KM başı maliyet: ${maliyetKm.toFixed(2)} ₺/km</b><br>` : 'KM başı maliyet: yeterli veri yok<br>'}
+        ${litre100km !== null ? `Ortalama tüketim: ${litre100km.toFixed(1)} L/100km` : ''}
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+  document.body.appendChild(container);
+  try{
+    const canvas = await html2canvas(container, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidthMm = 210, pageHeightMm = 297;
+    const ratio = pageWidthMm / canvas.width;
+    const pageHeightPx = Math.floor(pageHeightMm / ratio);
+    let renderedPx = 0, firstPage = true;
+    while(renderedPx < canvas.height){
+      const sliceHeightPx = Math.min(pageHeightPx, canvas.height - renderedPx);
+      const pageCanvas = document.createElement('canvas');
+      pageCanvas.width = canvas.width; pageCanvas.height = sliceHeightPx;
+      pageCanvas.getContext('2d').drawImage(canvas, 0, renderedPx, canvas.width, sliceHeightPx, 0, 0, canvas.width, sliceHeightPx);
+      const imgData = pageCanvas.toDataURL('image/jpeg', 0.85);
+      if(!firstPage) pdf.addPage();
+      pdf.addImage(imgData, 'JPEG', 0, 0, pageWidthMm, sliceHeightPx * ratio);
+      renderedPx += sliceHeightPx; firstPage = false;
+    }
+    pdf.save(`yakit-maliyet-raporu-${new Date().toISOString().slice(0,10)}.pdf`);
+    showToast('Yakıt maliyet raporu indirildi.');
+  }catch(e){ showToast('PDF oluşturulurken bir sorun oluştu.'); }
+  finally{ document.body.removeChild(container); }
+}
+document.getElementById('yakitMaliyetRaporBtn').addEventListener('click', generateYakitMaliyetRaporu);
+
+/* ---------------- ARAÇ VERİLERİ CSV ---------------- */
+document.getElementById('aracCsvBtn').addEventListener('click', ()=>{
+  const basliklar = ['Plaka','Model','Güncel KM','Güncel Yakıt','Kullanan','Başlangıç Yeri','Gidilecek Yer','Çıkış Tarihi','Çıkış KM','Dönüş Tarihi','Dönüş KM','Yakıt Alım Litre','Yakıt Alım KM','Yakıt Tutarı'];
+  const satirlar = [basliklar.join(',')];
+  ARACLAR.araclar.forEach(a=>{
+    const tripler = ARACLAR.hareketler.filter(h=>h.aracId===a.id);
+    const yakitlar = YAKIT_ALIMLARI.filter(y=>y.aracId===a.id);
+    if(tripler.length === 0 && yakitlar.length === 0){
+      satirlar.push([a.plaka, a.model||'', a.guncelKm, a.guncelYakit, '', '', '', '', '', '', '', '', '', ''].map(csvHucre).join(','));
+    }
+    tripler.forEach(h=>{
+      satirlar.push([
+        a.plaka, a.model||'', a.guncelKm, a.guncelYakit, h.kullanan||'', h.baslangicYeri||'', h.gidilenYer||'',
+        formatDate(h.alisSaati), h.alisKm, h.donusSaati?formatDate(h.donusSaati):'', h.donusKm||'', '', '', ''
+      ].map(csvHucre).join(','));
+    });
+    yakitlar.forEach(y=>{
+      satirlar.push([a.plaka, a.model||'', a.guncelKm, a.guncelYakit, '', '', '', '', '', '', '', y.litre, y.km, y.tutar||''].map(csvHucre).join(','));
+    });
+  });
+  const csvIcerik = '\uFEFF' + satirlar.join('\r\n');
+  downloadFile(`arac-verileri-${new Date().toISOString().slice(0,10)}.csv`, csvIcerik, 'text/csv;charset=utf-8;');
+  showToast('Araç verileri CSV indirildi.');
+});
+
 document.getElementById('newMalzemeBtn').addEventListener('click', ()=>{
   document.getElementById('f_malzeme_ad').value = '';
   document.getElementById('f_malzeme_stok').value = '0';
@@ -2767,6 +3095,7 @@ document.getElementById('submitMalzeme').addEventListener('click', async ()=>{
     await loadProducts();
     await loadAraclar();
     await loadSatinAlmaTalepleri();
+    await loadGeriBildirimler();
     renderProfileGrid();
   }catch(e){
     USERS = defaultUsers();
@@ -2775,5 +3104,6 @@ document.getElementById('submitMalzeme').addEventListener('click', async ()=>{
   }
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
