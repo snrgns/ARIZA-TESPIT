@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_37.html -->
+<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_38.html -->
 <html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -365,7 +365,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       </div>
       <div style="display:flex;gap:8px;margin-top:8px;">
         <button class="btn-secondary" id="yakitMaliyetRaporBtn" style="margin-top:0;flex:1;">⛽ Yakıt Maliyet Raporu</button>
-        <button class="btn-secondary" id="aracCsvBtn" style="margin-top:0;flex:1;">📊 Araç Verileri CSV</button>
+        <button class="btn-secondary" id="aracCsvBtn" style="margin-top:0;flex:1;">📊 Araç Verileri Excel</button>
       </div>
       <div id="aracList" style="margin-top:14px;display:flex;flex-direction:column;gap:12px;"></div>
     </div>
@@ -419,7 +419,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           Tüm verilerin (arızalar, ürünler, araçlar, kullanıcılar) bir yedeğini bilgisayarına indir.
         </div>
         <button class="btn-secondary" id="yedekBtn" style="margin-top:0;margin-bottom:8px;">💾 Tüm Verileri Yedekle (JSON)</button>
-        <button class="btn-secondary" id="csvBtn" style="margin-top:0;">📊 Arıza Kayıtlarını CSV İndir (Excel)</button>
+        <button class="btn-secondary" id="csvBtn" style="margin-top:0;">📊 Arıza Kayıtlarını Excel İndir</button>
       </div>
 
       <div class="admin-block">
@@ -828,7 +828,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_37.html"></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_38.html"></div>
 </div>
 
 <script>
@@ -944,6 +944,21 @@ function ensurePdfLibsLoaded(){
     }
   })();
   return pdfLibsPromise;
+}
+
+let xlsxLibPromise = null;
+function ensureXlsxLoaded(){
+  if(xlsxLibPromise) return xlsxLibPromise;
+  xlsxLibPromise = (async ()=>{
+    if(typeof window.XLSX === 'undefined'){
+      await loadScriptWithFallbacks([
+        'https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+        'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'
+      ]);
+    }
+  })();
+  return xlsxLibPromise;
 }
 
 let DATA = { tickets: [], notifications: [] };
@@ -2864,33 +2879,47 @@ function csvHucre(deger){
   return s;
 }
 
-document.getElementById('csvBtn').addEventListener('click', ()=>{
+function downloadXlsx(filename, sheetName, aoa){
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  const colWidths = aoa[0].map((_, colIdx)=>{
+    const maxLen = aoa.reduce((max,row)=> Math.max(max, String(row[colIdx] ?? '').length), 10);
+    return { wch: Math.min(maxLen + 2, 50) };
+  });
+  ws['!cols'] = colWidths;
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  XLSX.writeFile(wb, filename);
+}
+
+document.getElementById('csvBtn').addEventListener('click', async ()=>{
+  showToast('Excel hazırlanıyor…');
+  try{ await ensureXlsxLoaded(); }catch(e){ showToast('Excel kütüphanesi yüklenemedi.'); return; }
   const basliklar = ['ARZ No','Ekipman','Konum','Durum','Öncelik','Bildiren','Atanan','Açılış Tarihi','Kapatan','Kapanış Tarihi','Çözüm'];
-  const satirlar = [basliklar.join(',')];
+  const aoa = [basliklar];
   DATA.tickets.forEach(t=>{
-    satirlar.push([
+    aoa.push([
       'ARZ-' + pad(t.id), t.ekipman, t.konum||'', t.durum==='acik'?'Açık':'Kapandı', priorityLabel(t.oncelik),
       t.bildiren||'', t.atanan||'', formatDate(t.olusturmaTarihi),
       t.kapatan||'', t.kapanisTarihi ? formatDate(t.kapanisTarihi) : '', t.cozum||''
-    ].map(csvHucre).join(','));
+    ]);
   });
-  const csvIcerik = '\uFEFF' + satirlar.join('\r\n'); // BOM: Excel Türkçe karakterleri doğru göstersin
-  downloadFile(`ariza-kayitlari-${new Date().toISOString().slice(0,10)}.csv`, csvIcerik, 'text/csv;charset=utf-8;');
-  showToast('CSV indirildi.');
+  downloadXlsx(`ariza-kayitlari-${new Date().toISOString().slice(0,10)}.xlsx`, 'Arıza Kayıtları', aoa);
+  showToast('Excel indirildi.');
 });
 
-document.getElementById('talepCsvBtn').addEventListener('click', ()=>{
+document.getElementById('talepCsvBtn').addEventListener('click', async ()=>{
+  showToast('Excel hazırlanıyor…');
+  try{ await ensureXlsxLoaded(); }catch(e){ showToast('Excel kütüphanesi yüklenemedi.'); return; }
   const basliklar = ['Ürün/Malzeme','Marka','Adet','Kg','Kullanılacağı Yer','Açıklama','Durum','Talep Eden','Talep Tarihi'];
   const durumLabelCsv = { bekliyor:'Bekliyor', onaylandi:'Onaylandı', reddedildi:'Reddedildi' };
-  const satirlar = [basliklar.join(',')];
+  const aoa = [basliklar];
   SATIN_ALMA_TALEPLERI.forEach(t=>{
-    satirlar.push([
+    aoa.push([
       t.malzemeAdi, t.marka||'', t.adet||'', t.kg||'', t.yer||'', t.aciklama||'',
       durumLabelCsv[t.durum]||t.durum, t.talepEden||'', formatDate(t.olusturmaTarihi)
-    ].map(csvHucre).join(','));
+    ]);
   });
-  const csvIcerik = '\uFEFF' + satirlar.join('\r\n');
-  downloadFile(`satin-alma-talepleri-${new Date().toISOString().slice(0,10)}.csv`, csvIcerik, 'text/csv;charset=utf-8;');
+  downloadXlsx(`satin-alma-talepleri-${new Date().toISOString().slice(0,10)}.xlsx`, 'Satın Alma Talepleri', aoa);
   showToast('Excel dosyası indirildi.');
 });
 
@@ -3190,28 +3219,29 @@ async function generateYakitMaliyetRaporu(){
 document.getElementById('yakitMaliyetRaporBtn').addEventListener('click', generateYakitMaliyetRaporu);
 
 /* ---------------- ARAÇ VERİLERİ CSV ---------------- */
-document.getElementById('aracCsvBtn').addEventListener('click', ()=>{
+document.getElementById('aracCsvBtn').addEventListener('click', async ()=>{
+  showToast('Excel hazırlanıyor…');
+  try{ await ensureXlsxLoaded(); }catch(e){ showToast('Excel kütüphanesi yüklenemedi.'); return; }
   const basliklar = ['Plaka','Model','Güncel KM','Güncel Yakıt','Kullanan','Başlangıç Yeri','Gidilecek Yer','Çıkış Tarihi','Çıkış KM','Dönüş Tarihi','Dönüş KM','Yakıt Alım Litre','Yakıt Alım KM','Yakıt Tutarı'];
-  const satirlar = [basliklar.join(',')];
+  const aoa = [basliklar];
   ARACLAR.araclar.forEach(a=>{
     const tripler = ARACLAR.hareketler.filter(h=>h.aracId===a.id);
     const yakitlar = YAKIT_ALIMLARI.filter(y=>y.aracId===a.id);
     if(tripler.length === 0 && yakitlar.length === 0){
-      satirlar.push([a.plaka, a.model||'', a.guncelKm, a.guncelYakit, '', '', '', '', '', '', '', '', '', ''].map(csvHucre).join(','));
+      aoa.push([a.plaka, a.model||'', a.guncelKm, a.guncelYakit, '', '', '', '', '', '', '', '', '', '']);
     }
     tripler.forEach(h=>{
-      satirlar.push([
+      aoa.push([
         a.plaka, a.model||'', a.guncelKm, a.guncelYakit, h.kullanan||'', h.baslangicYeri||'', h.gidilenYer||'',
         formatDate(h.alisSaati), h.alisKm, h.donusSaati?formatDate(h.donusSaati):'', h.donusKm||'', '', '', ''
-      ].map(csvHucre).join(','));
+      ]);
     });
     yakitlar.forEach(y=>{
-      satirlar.push([a.plaka, a.model||'', a.guncelKm, a.guncelYakit, '', '', '', '', '', '', '', y.litre, y.km, y.tutar||''].map(csvHucre).join(','));
+      aoa.push([a.plaka, a.model||'', a.guncelKm, a.guncelYakit, '', '', '', '', '', '', '', y.litre, y.km, y.tutar||'']);
     });
   });
-  const csvIcerik = '\uFEFF' + satirlar.join('\r\n');
-  downloadFile(`arac-verileri-${new Date().toISOString().slice(0,10)}.csv`, csvIcerik, 'text/csv;charset=utf-8;');
-  showToast('Araç verileri CSV indirildi.');
+  downloadXlsx(`arac-verileri-${new Date().toISOString().slice(0,10)}.xlsx`, 'Araç Verileri', aoa);
+  showToast('Araç verileri Excel indirildi.');
 });
 
 document.getElementById('newMalzemeBtn').addEventListener('click', ()=>{
