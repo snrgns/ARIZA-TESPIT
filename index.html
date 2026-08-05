@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_40.html -->
+<html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="file:///C:/Users/enter/Downloads/manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#146C71">
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
 .trip-status.acik{background:var(--warn-soft);color:var(--warn);}
 .trip-status.kapali{background:var(--success-soft);color:var(--success);}
 </style>
-</head>
+<script src="./Enterlife Festival_files/supabase-js@2"></script></head>
 <body>
 <div id="app">
 
@@ -407,7 +407,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           Yapılan işleri ekipman adına göre gruplanmış, fotoğraflar dahil tek bir PDF olarak indirin.
         </div>
         <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:10px;">
-          <input type="checkbox" id="onlyClosedCheck" checked style="width:16px;height:16px;">
+          <input type="checkbox" id="onlyClosedCheck" checked="" style="width:16px;height:16px;">
           Sadece kapatılan (tamamlanan) kayıtlar
         </label>
         <button class="btn-primary" id="exportPdfBtn">📥 PDF Raporu İndir</button>
@@ -442,7 +442,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         <div class="field">
           <label>Fotoğraf</label>
           <label class="photo-add-btn" for="f_foto">📷 Fotoğraf Ekle</label>
-          <input type="file" id="f_foto" accept="image/*" multiple style="display:none;">
+          <input type="file" id="f_foto" accept="image/*" multiple="" style="display:none;">
           <div class="photo-strip" id="newPhotoStrip"></div>
         </div>
         <div class="field">
@@ -451,7 +451,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           <input type="file" id="f_video" accept="video/*" style="display:none;">
           <div id="newVideoAdi" style="font-size:12px;color:var(--ink-muted);margin-top:6px;"></div>
         </div>
-        <div class="field"><label>Bildiren Kişi</label><input type="text" id="f_bildiren" disabled></div>
+        <div class="field"><label>Bildiren Kişi</label><input type="text" id="f_bildiren" disabled=""></div>
         <div class="field">
           <label>Öncelik</label>
           <div class="priority-picker" id="priorityPicker">
@@ -485,7 +485,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         <div class="field">
           <label>Fotoğraf</label>
           <label class="photo-add-btn" for="f_foto_cozum">📷 Fotoğraf Ekle</label>
-          <input type="file" id="f_foto_cozum" accept="image/*" multiple style="display:none;">
+          <input type="file" id="f_foto_cozum" accept="image/*" multiple="" style="display:none;">
           <div class="photo-strip" id="closePhotoStrip"></div>
         </div>
         <div class="field">
@@ -494,7 +494,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           <input type="file" id="f_video_cozum" accept="video/*" style="display:none;">
           <div id="closeVideoAdi" style="font-size:12px;color:var(--ink-muted);margin-top:6px;"></div>
         </div>
-        <div class="field"><label>Kapatan Kişi</label><input type="text" id="f_kapatan" disabled></div>
+        <div class="field"><label>Kapatan Kişi</label><input type="text" id="f_kapatan" disabled=""></div>
         <button class="btn-danger" id="submitClose">Arızayı Giderildi Olarak Kapat</button>
       </div>
     </div>
@@ -530,7 +530,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Yeni Ürün Ekle</div><button class="sheet-close" data-close="yeniUrunOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Bölüm</label><input type="text" id="f_urun_bolum" disabled></div>
+        <div class="field"><label>Bölüm</label><input type="text" id="f_urun_bolum" disabled=""></div>
         <div class="field"><label>Ürün / Ekipman Adı *</label><input type="text" id="f_urun_ad" placeholder="örn. CNC Torna Tezgahı #3"></div>
         <div class="field">
           <label>Fotoğraf</label>
@@ -564,8 +564,8 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title" id="stokIslemTitle">Stok İşlemi</div><button class="sheet-close" data-close="stokIslemOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Ürün</label><input type="text" id="f_stok_urun" disabled></div>
-        <div class="field"><label>Mevcut Stok</label><input type="text" id="f_stok_mevcut" disabled></div>
+        <div class="field"><label>Ürün</label><input type="text" id="f_stok_urun" disabled=""></div>
+        <div class="field"><label>Mevcut Stok</label><input type="text" id="f_stok_mevcut" disabled=""></div>
         <div class="field"><label id="stokMiktarLabel">Miktar *</label><input type="number" id="f_stok_miktar" min="1" value="1"></div>
         <div class="field" id="stokFiyatAlani" style="display:none;">
           <label>Birim Alış Fiyatı (₺, opsiyonel)</label>
@@ -613,7 +613,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Araç Çıkış Kaydı</div><button class="sheet-close" data-close="aracCikisOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Araç</label><input type="text" id="f_cikis_arac" disabled></div>
+        <div class="field"><label>Araç</label><input type="text" id="f_cikis_arac" disabled=""></div>
         <div class="field"><label>Kullanan Kişi *</label><input type="text" id="f_cikis_kullanan" placeholder="Ad Soyad"></div>
         <div class="field"><label>Başlangıç Yeri *</label><input type="text" id="f_cikis_baslangic" placeholder="örn. Depo / Merkez Ofis"></div>
         <div class="field"><label>Gidilecek Yer *</label><input type="text" id="f_cikis_yer" placeholder="örn. Müşteri X - Ataşehir"></div>
@@ -644,7 +644,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Yakıt Alım Kaydı</div><button class="sheet-close" data-close="yakitAlimOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Araç</label><input type="text" id="f_yakit_arac" disabled></div>
+        <div class="field"><label>Araç</label><input type="text" id="f_yakit_arac" disabled=""></div>
         <div style="display:flex;gap:10px;">
           <div class="field" style="flex:1;"><label>Litre *</label><input type="number" id="f_yakit_litre" min="0" step="0.01" placeholder="örn. 45.5"></div>
           <div class="field" style="flex:1;"><label>KM *</label><input type="number" id="f_yakit_km" min="0"></div>
@@ -730,7 +730,16 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           <div class="field" style="flex:1;"><label>Kg</label><input type="number" id="f_talep_kg" min="0" step="0.01" placeholder="örn. 25"></div>
         </div>
         <div class="field"><label>Kullanılacağı Yer</label><input type="text" id="f_talep_yer" placeholder="örn. Atölye 2, Araç Bakım"></div>
-        <div class="field"><label>Açıklama *</label><textarea id="f_talep_aciklama" rows="4" placeholder="Neden gerekli, ne kadar gerekli, aciliyeti nedir?"></textarea></div>
+        <div class="field">
+          <label>Aciliyet</label>
+          <div class="priority-picker" id="talepAciliyetPicker">
+            <div class="priority-opt" data-p="dusuk">Düşük</div>
+            <div class="priority-opt" data-p="orta">Orta</div>
+            <div class="priority-opt sel-yuksek" data-p="yuksek">Yüksek</div>
+            <div class="priority-opt" data-p="acil">Acil</div>
+          </div>
+        </div>
+        <div class="field"><label>Açıklama *</label><textarea id="f_talep_aciklama" rows="4" placeholder="Neden gerekli, ne kadar gerekli"></textarea></div>
         <div class="field">
           <label>Fotoğraf</label>
           <label class="photo-add-btn" for="f_talep_foto">📷 Fotoğraf Ekle</label>
@@ -833,7 +842,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src=""></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_40.html"></div>
 </div>
 
 <script>
@@ -972,6 +981,7 @@ let PRODUCTS = { bolumler: [], urunler: [] };
 let currentFilter = 'tumu';
 let searchTerm = '';
 let selectedPriority = 'yuksek';
+let selectedTalepAciliyet = 'yuksek';
 let activeTicketId = null;
 let newPhotos = [];
 let closePhotos = [];
@@ -1059,7 +1069,7 @@ async function loadSatinAlmaTalepleri(){
   const { data, error } = await sb.from('satin_alma_talepleri').select('*').order('olusturma_tarihi', { ascending:false });
   SATIN_ALMA_TALEPLERI = (!error && data) ? data.map(t=>({
     id: t.id, malzemeAdi: t.malzeme_adi, aciklama: t.aciklama, foto: t.foto,
-    marka: t.marka, adet: t.adet, kg: t.kg, yer: t.yer,
+    marka: t.marka, adet: t.adet, kg: t.kg, yer: t.yer, aciliyet: t.aciliyet || 'orta',
     talepEden: t.talep_eden, talepEdenId: t.talep_eden_id, durum: t.durum,
     olusturmaTarihi: t.olusturma_tarihi
   })) : [];
@@ -2035,7 +2045,12 @@ document.getElementById('submitDegerlendirme').addEventListener('click', async (
 function renderTalepler(){
   const el = document.getElementById('talepList');
   const isAdmin = currentUser && currentUser.role === 'admin';
-  const sorted = [...SATIN_ALMA_TALEPLERI].sort((a,b)=> new Date(b.olusturmaTarihi) - new Date(a.olusturmaTarihi));
+  const aciliyetAgirlik = { acil:0, yuksek:1, orta:2, dusuk:3 };
+  const sorted = [...SATIN_ALMA_TALEPLERI].sort((a,b)=>{
+    const fark = (aciliyetAgirlik[a.aciliyet] ?? 2) - (aciliyetAgirlik[b.aciliyet] ?? 2);
+    if(fark !== 0) return fark;
+    return new Date(b.olusturmaTarihi) - new Date(a.olusturmaTarihi);
+  });
   if(sorted.length === 0){
     el.innerHTML = `<div class="notif-empty">Henüz satın alma talebi yok.</div>`;
     return;
@@ -2048,6 +2063,7 @@ function renderTalepler(){
         <b>${escapeHtml(t.malzemeAdi)}</b>
         <span class="trip-status ${t.durum==='reddedildi' ? 'acik' : durumBadge[t.durum]}" style="${t.durum==='reddedildi' ? 'background:var(--danger-soft);color:var(--danger);' : ''}">${durumLabel[t.durum]}</span>
       </div>
+      <div style="margin-bottom:4px;"><span class="priority-tag priority-${t.aciliyet||'orta'}">${priorityLabel(t.aciliyet||'orta')}</span></div>
       <div style="font-size:11.5px;color:var(--ink-muted);margin-bottom:2px;">
         ${t.marka ? 'Marka: ' + escapeHtml(t.marka) + ' · ' : ''}${t.adet ? 'Adet: ' + t.adet + ' · ' : ''}${t.kg ? t.kg + ' kg · ' : ''}${t.yer ? 'Yer: ' + escapeHtml(t.yer) : ''}
       </div>
@@ -2093,10 +2109,20 @@ document.getElementById('newTalepBtn').addEventListener('click', ()=>{
   document.getElementById('f_talep_kg').value = '';
   document.getElementById('f_talep_yer').value = '';
   document.getElementById('f_talep_aciklama').value = '';
+  selectedTalepAciliyet = 'yuksek';
+  document.querySelectorAll('#talepAciliyetPicker .priority-opt').forEach(el=>el.className='priority-opt' + (el.dataset.p==='yuksek' ? ' sel-yuksek':''));
   talepPhoto = null;
   renderPhotoStrip([], 'talepPhotoStrip');
   document.getElementById('f_talep_foto').value = '';
   document.getElementById('yeniTalepOverlay').classList.add('open');
+});
+
+document.getElementById('talepAciliyetPicker').addEventListener('click', (e)=>{
+  const opt = e.target.closest('.priority-opt'); if(!opt) return;
+  selectedTalepAciliyet = opt.dataset.p;
+  document.querySelectorAll('#talepAciliyetPicker .priority-opt').forEach(el=>{
+    el.className = 'priority-opt' + (el.dataset.p===selectedTalepAciliyet ? ' sel-'+selectedTalepAciliyet : '');
+  });
 });
 
 document.getElementById('f_talep_foto').addEventListener('change', async (e)=>{
@@ -2119,18 +2145,19 @@ document.getElementById('submitTalep').addEventListener('click', async ()=>{
   const id = 't' + Date.now();
   const olusturmaTarihi = new Date().toISOString();
   const { error } = await sb.from('satin_alma_talepleri').insert({
-    id, malzeme_adi: ad, marka, adet, kg, yer, aciklama, foto: talepPhoto,
+    id, malzeme_adi: ad, marka, adet, kg, yer, aciliyet: selectedTalepAciliyet, aciklama, foto: talepPhoto,
     talep_eden: currentUser.name, talep_eden_id: currentUser.id, durum: 'bekliyor'
   });
   if(error){ showToast('Talep oluşturulurken bir sorun oluştu.'); return; }
-  SATIN_ALMA_TALEPLERI.unshift({ id, malzemeAdi: ad, marka, adet, kg, yer, aciklama, foto: talepPhoto, talepEden: currentUser.name, talepEdenId: currentUser.id, durum: 'bekliyor', olusturmaTarihi });
+  SATIN_ALMA_TALEPLERI.unshift({ id, malzemeAdi: ad, marka, adet, kg, yer, aciliyet: selectedTalepAciliyet, aciklama, foto: talepPhoto, talepEden: currentUser.name, talepEdenId: currentUser.id, durum: 'bekliyor', olusturmaTarihi });
 
   const notifId = 'n' + Date.now() + Math.floor(Math.random()*1000);
   await sb.from('bildirimler').insert({
     id: notifId, tip: 'satin_alma', talep_id: id, ekipman: ad, bildiren: currentUser.name, read_by: []
   });
   DATA.notifications.unshift({ id: notifId, tip: 'satin_alma', talepId: id, ekipman: ad, oncelik: null, bildiren: currentUser.name, createdAt: olusturmaTarihi, readBy: [] });
-  sendPushToAll('Satın Alma Talebi', `${currentUser.name}: ${ad}`, '/');
+  sendPushToAll('Satın Alma Talebi', `${currentUser.name}: ${ad} (${priorityLabel(selectedTalepAciliyet)})`, '/');
+
 
   document.getElementById('yeniTalepOverlay').classList.remove('open');
   renderTalepler();
@@ -2932,12 +2959,12 @@ document.getElementById('csvBtn').addEventListener('click', async ()=>{
 document.getElementById('talepCsvBtn').addEventListener('click', async ()=>{
   showToast('Excel hazırlanıyor…');
   try{ await ensureXlsxLoaded(); }catch(e){ showToast('Excel kütüphanesi yüklenemedi.'); return; }
-  const basliklar = ['Ürün/Malzeme','Marka','Adet','Kg','Kullanılacağı Yer','Açıklama','Durum','Talep Eden','Talep Tarihi'];
+  const basliklar = ['Ürün/Malzeme','Marka','Adet','Kg','Kullanılacağı Yer','Aciliyet','Açıklama','Durum','Talep Eden','Talep Tarihi'];
   const durumLabelCsv = { bekliyor:'Bekliyor', onaylandi:'Onaylandı', reddedildi:'Reddedildi' };
   const aoa = [basliklar];
   SATIN_ALMA_TALEPLERI.forEach(t=>{
     aoa.push([
-      t.malzemeAdi, t.marka||'', t.adet||'', t.kg||'', t.yer||'', t.aciklama||'',
+      t.malzemeAdi, t.marka||'', t.adet||'', t.kg||'', t.yer||'', priorityLabel(t.aciliyet||'orta'), t.aciklama||'',
       durumLabelCsv[t.durum]||t.durum, t.talepEden||'', formatDate(t.olusturmaTarihi)
     ]);
   });
@@ -3311,5 +3338,6 @@ document.getElementById('submitMalzeme').addEventListener('click', async ()=>{
   }
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
