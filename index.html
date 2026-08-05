@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_38.html -->
-<html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<link rel="manifest" href="file:///C:/Users/enter/Downloads/manifest.json">
+<link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#146C71">
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
 .trip-status.acik{background:var(--warn-soft);color:var(--warn);}
 .trip-status.kapali{background:var(--success-soft);color:var(--success);}
 </style>
-<script src="./Enterlife Festival_files/supabase-js@2"></script></head>
+</head>
 <body>
 <div id="app">
 
@@ -407,7 +407,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           Yapılan işleri ekipman adına göre gruplanmış, fotoğraflar dahil tek bir PDF olarak indirin.
         </div>
         <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:10px;">
-          <input type="checkbox" id="onlyClosedCheck" checked="" style="width:16px;height:16px;">
+          <input type="checkbox" id="onlyClosedCheck" checked style="width:16px;height:16px;">
           Sadece kapatılan (tamamlanan) kayıtlar
         </label>
         <button class="btn-primary" id="exportPdfBtn">📥 PDF Raporu İndir</button>
@@ -442,7 +442,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         <div class="field">
           <label>Fotoğraf</label>
           <label class="photo-add-btn" for="f_foto">📷 Fotoğraf Ekle</label>
-          <input type="file" id="f_foto" accept="image/*" multiple="" style="display:none;">
+          <input type="file" id="f_foto" accept="image/*" multiple style="display:none;">
           <div class="photo-strip" id="newPhotoStrip"></div>
         </div>
         <div class="field">
@@ -451,7 +451,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           <input type="file" id="f_video" accept="video/*" style="display:none;">
           <div id="newVideoAdi" style="font-size:12px;color:var(--ink-muted);margin-top:6px;"></div>
         </div>
-        <div class="field"><label>Bildiren Kişi</label><input type="text" id="f_bildiren" disabled=""></div>
+        <div class="field"><label>Bildiren Kişi</label><input type="text" id="f_bildiren" disabled></div>
         <div class="field">
           <label>Öncelik</label>
           <div class="priority-picker" id="priorityPicker">
@@ -485,7 +485,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         <div class="field">
           <label>Fotoğraf</label>
           <label class="photo-add-btn" for="f_foto_cozum">📷 Fotoğraf Ekle</label>
-          <input type="file" id="f_foto_cozum" accept="image/*" multiple="" style="display:none;">
+          <input type="file" id="f_foto_cozum" accept="image/*" multiple style="display:none;">
           <div class="photo-strip" id="closePhotoStrip"></div>
         </div>
         <div class="field">
@@ -494,7 +494,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           <input type="file" id="f_video_cozum" accept="video/*" style="display:none;">
           <div id="closeVideoAdi" style="font-size:12px;color:var(--ink-muted);margin-top:6px;"></div>
         </div>
-        <div class="field"><label>Kapatan Kişi</label><input type="text" id="f_kapatan" disabled=""></div>
+        <div class="field"><label>Kapatan Kişi</label><input type="text" id="f_kapatan" disabled></div>
         <button class="btn-danger" id="submitClose">Arızayı Giderildi Olarak Kapat</button>
       </div>
     </div>
@@ -530,7 +530,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Yeni Ürün Ekle</div><button class="sheet-close" data-close="yeniUrunOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Bölüm</label><input type="text" id="f_urun_bolum" disabled=""></div>
+        <div class="field"><label>Bölüm</label><input type="text" id="f_urun_bolum" disabled></div>
         <div class="field"><label>Ürün / Ekipman Adı *</label><input type="text" id="f_urun_ad" placeholder="örn. CNC Torna Tezgahı #3"></div>
         <div class="field">
           <label>Fotoğraf</label>
@@ -564,9 +564,14 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title" id="stokIslemTitle">Stok İşlemi</div><button class="sheet-close" data-close="stokIslemOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Ürün</label><input type="text" id="f_stok_urun" disabled=""></div>
-        <div class="field"><label>Mevcut Stok</label><input type="text" id="f_stok_mevcut" disabled=""></div>
+        <div class="field"><label>Ürün</label><input type="text" id="f_stok_urun" disabled></div>
+        <div class="field"><label>Mevcut Stok</label><input type="text" id="f_stok_mevcut" disabled></div>
         <div class="field"><label id="stokMiktarLabel">Miktar *</label><input type="number" id="f_stok_miktar" min="1" value="1"></div>
+        <div class="field" id="stokFiyatAlani" style="display:none;">
+          <label>Birim Alış Fiyatı (₺, opsiyonel)</label>
+          <input type="number" id="f_stok_fiyat" min="0" step="0.01" placeholder="örn. 45.50">
+          <div id="stokToplamTutar" style="font-size:12px;color:var(--ink-muted);margin-top:6px;"></div>
+        </div>
         <div class="field"><label id="stokAciklamaLabel">Açıklama</label><textarea id="f_stok_aciklama" rows="3" placeholder="örn. Hangi arıza/işlem için kullanıldı"></textarea></div>
         <button class="btn-primary" id="submitStokIslem">Onayla</button>
       </div>
@@ -608,7 +613,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Araç Çıkış Kaydı</div><button class="sheet-close" data-close="aracCikisOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Araç</label><input type="text" id="f_cikis_arac" disabled=""></div>
+        <div class="field"><label>Araç</label><input type="text" id="f_cikis_arac" disabled></div>
         <div class="field"><label>Kullanan Kişi *</label><input type="text" id="f_cikis_kullanan" placeholder="Ad Soyad"></div>
         <div class="field"><label>Başlangıç Yeri *</label><input type="text" id="f_cikis_baslangic" placeholder="örn. Depo / Merkez Ofis"></div>
         <div class="field"><label>Gidilecek Yer *</label><input type="text" id="f_cikis_yer" placeholder="örn. Müşteri X - Ataşehir"></div>
@@ -639,7 +644,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Yakıt Alım Kaydı</div><button class="sheet-close" data-close="yakitAlimOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Araç</label><input type="text" id="f_yakit_arac" disabled=""></div>
+        <div class="field"><label>Araç</label><input type="text" id="f_yakit_arac" disabled></div>
         <div style="display:flex;gap:10px;">
           <div class="field" style="flex:1;"><label>Litre *</label><input type="number" id="f_yakit_litre" min="0" step="0.01" placeholder="örn. 45.5"></div>
           <div class="field" style="flex:1;"><label>KM *</label><input type="number" id="f_yakit_km" min="0"></div>
@@ -828,7 +833,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_38.html"></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src=""></div>
 </div>
 
 <script>
@@ -1903,14 +1908,29 @@ function openStokIslem(urunId, tip){
   document.getElementById('f_stok_miktar').value = 1;
   document.getElementById('f_stok_miktar').max = tip === 'kullanim' ? u.stok : '';
   document.getElementById('f_stok_aciklama').value = '';
+  document.getElementById('f_stok_fiyat').value = '';
+  document.getElementById('stokToplamTutar').textContent = '';
+  document.getElementById('stokFiyatAlani').style.display = tip === 'stok_ekleme' ? 'block' : 'none';
   document.getElementById('stokIslemOverlay').classList.add('open');
 }
+
+function stokFiyatToplamGuncelle(){
+  const miktar = parseFloat(document.getElementById('f_stok_miktar').value) || 0;
+  const fiyat = parseFloat(document.getElementById('f_stok_fiyat').value) || 0;
+  const toplam = miktar * fiyat;
+  document.getElementById('stokToplamTutar').textContent = fiyat > 0 ? `Toplam: ${toplam.toFixed(2)} ₺` : '';
+}
+document.getElementById('f_stok_fiyat').addEventListener('input', stokFiyatToplamGuncelle);
+document.getElementById('f_stok_miktar').addEventListener('input', stokFiyatToplamGuncelle);
 
 document.getElementById('submitStokIslem').addEventListener('click', async ()=>{
   const u = PRODUCTS.urunler.find(x=>x.id===activeStokUrunId);
   if(!u) return;
   const miktar = parseInt(document.getElementById('f_stok_miktar').value);
   const aciklama = document.getElementById('f_stok_aciklama').value.trim();
+  const fiyatVal = document.getElementById('f_stok_fiyat').value.trim();
+  const birimFiyat = (activeStokTip === 'stok_ekleme' && fiyatVal) ? parseFloat(fiyatVal) : null;
+  const toplamTutar = birimFiyat !== null ? +(birimFiyat * miktar).toFixed(2) : null;
   if(!miktar || miktar < 1){ showToast('Geçerli bir miktar girin.'); return; }
   if(activeStokTip === 'kullanim' && miktar > u.stok){ showToast('Kullanılan miktar mevcut stoktan fazla olamaz.'); return; }
   if(activeStokTip === 'kullanim' && !aciklama){ showToast('Kullanım için açıklama girmeniz gerekiyor.'); return; }
@@ -1921,6 +1941,7 @@ document.getElementById('submitStokIslem').addEventListener('click', async ()=>{
 
   await sb.from('stok_hareketleri').insert({
     id: 'h' + Date.now(), urun_id: u.id, tip: activeStokTip, miktar, aciklama: aciklama || null,
+    birim_fiyat: birimFiyat, toplam_tutar: toplamTutar,
     yapan: currentUser.name, yapan_id: currentUser.id
   });
 
@@ -1928,9 +1949,10 @@ document.getElementById('submitStokIslem').addEventListener('click', async ()=>{
   document.getElementById('stokIslemOverlay').classList.remove('open');
   renderUrunler();
   if(document.getElementById('satinAlmaTab').style.display !== 'none') renderSatinAlma();
-  const eylemMetni = activeStokTip === 'kullanim' ? `<b>${escapeHtml(currentUser.name)}</b>, ${escapeHtml(u.ad)} için ${miktar} adet stok kullandı` : `<b>${escapeHtml(currentUser.name)}</b>, ${escapeHtml(u.ad)} stoğuna ${miktar} adet ekledi`;
+  const fiyatMetni = toplamTutar !== null ? ` (${toplamTutar.toFixed(2)} ₺)` : '';
+  const eylemMetni = activeStokTip === 'kullanim' ? `<b>${escapeHtml(currentUser.name)}</b>, ${escapeHtml(u.ad)} için ${miktar} adet stok kullandı` : `<b>${escapeHtml(currentUser.name)}</b>, ${escapeHtml(u.ad)} stoğuna ${miktar} adet ekledi${fiyatMetni}`;
   await pushGenericNotification('stok', eylemMetni);
-  showToast(activeStokTip === 'kullanim' ? `${miktar} adet kullanıldı, kalan stok: ${yeniStok}` : `${miktar} adet stoğa eklendi, yeni stok: ${yeniStok}`);
+  showToast(activeStokTip === 'kullanim' ? `${miktar} adet kullanıldı, kalan stok: ${yeniStok}` : `${miktar} adet stoğa eklendi, yeni stok: ${yeniStok}${fiyatMetni}`);
 });
 
 /* ---------------- SATIN ALMA ---------------- */
@@ -3289,6 +3311,5 @@ document.getElementById('submitMalzeme').addEventListener('click', async ()=>{
   }
 })();
 </script>
-
-
-</body></html>
+</body>
+</html>
