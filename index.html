@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/enter/Downloads/index_40.html -->
-<html lang="tr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<link rel="manifest" href="file:///C:/Users/enter/Downloads/manifest.json">
+<link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#146C71">
@@ -241,7 +241,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
 .trip-status.acik{background:var(--warn-soft);color:var(--warn);}
 .trip-status.kapali{background:var(--success-soft);color:var(--success);}
 </style>
-<script src="./Enterlife Festival_files/supabase-js@2"></script></head>
+</head>
 <body>
 <div id="app">
 
@@ -407,7 +407,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           Yapılan işleri ekipman adına göre gruplanmış, fotoğraflar dahil tek bir PDF olarak indirin.
         </div>
         <label style="display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:10px;">
-          <input type="checkbox" id="onlyClosedCheck" checked="" style="width:16px;height:16px;">
+          <input type="checkbox" id="onlyClosedCheck" checked style="width:16px;height:16px;">
           Sadece kapatılan (tamamlanan) kayıtlar
         </label>
         <button class="btn-primary" id="exportPdfBtn">📥 PDF Raporu İndir</button>
@@ -442,7 +442,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         <div class="field">
           <label>Fotoğraf</label>
           <label class="photo-add-btn" for="f_foto">📷 Fotoğraf Ekle</label>
-          <input type="file" id="f_foto" accept="image/*" multiple="" style="display:none;">
+          <input type="file" id="f_foto" accept="image/*" multiple style="display:none;">
           <div class="photo-strip" id="newPhotoStrip"></div>
         </div>
         <div class="field">
@@ -451,7 +451,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           <input type="file" id="f_video" accept="video/*" style="display:none;">
           <div id="newVideoAdi" style="font-size:12px;color:var(--ink-muted);margin-top:6px;"></div>
         </div>
-        <div class="field"><label>Bildiren Kişi</label><input type="text" id="f_bildiren" disabled=""></div>
+        <div class="field"><label>Bildiren Kişi</label><input type="text" id="f_bildiren" disabled></div>
         <div class="field">
           <label>Öncelik</label>
           <div class="priority-picker" id="priorityPicker">
@@ -485,7 +485,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
         <div class="field">
           <label>Fotoğraf</label>
           <label class="photo-add-btn" for="f_foto_cozum">📷 Fotoğraf Ekle</label>
-          <input type="file" id="f_foto_cozum" accept="image/*" multiple="" style="display:none;">
+          <input type="file" id="f_foto_cozum" accept="image/*" multiple style="display:none;">
           <div class="photo-strip" id="closePhotoStrip"></div>
         </div>
         <div class="field">
@@ -494,7 +494,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
           <input type="file" id="f_video_cozum" accept="video/*" style="display:none;">
           <div id="closeVideoAdi" style="font-size:12px;color:var(--ink-muted);margin-top:6px;"></div>
         </div>
-        <div class="field"><label>Kapatan Kişi</label><input type="text" id="f_kapatan" disabled=""></div>
+        <div class="field"><label>Kapatan Kişi</label><input type="text" id="f_kapatan" disabled></div>
         <button class="btn-danger" id="submitClose">Arızayı Giderildi Olarak Kapat</button>
       </div>
     </div>
@@ -530,7 +530,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Yeni Ürün Ekle</div><button class="sheet-close" data-close="yeniUrunOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Bölüm</label><input type="text" id="f_urun_bolum" disabled=""></div>
+        <div class="field"><label>Bölüm</label><input type="text" id="f_urun_bolum" disabled></div>
         <div class="field"><label>Ürün / Ekipman Adı *</label><input type="text" id="f_urun_ad" placeholder="örn. CNC Torna Tezgahı #3"></div>
         <div class="field">
           <label>Fotoğraf</label>
@@ -564,8 +564,8 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title" id="stokIslemTitle">Stok İşlemi</div><button class="sheet-close" data-close="stokIslemOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Ürün</label><input type="text" id="f_stok_urun" disabled=""></div>
-        <div class="field"><label>Mevcut Stok</label><input type="text" id="f_stok_mevcut" disabled=""></div>
+        <div class="field"><label>Ürün</label><input type="text" id="f_stok_urun" disabled></div>
+        <div class="field"><label>Mevcut Stok</label><input type="text" id="f_stok_mevcut" disabled></div>
         <div class="field"><label id="stokMiktarLabel">Miktar *</label><input type="number" id="f_stok_miktar" min="1" value="1"></div>
         <div class="field" id="stokFiyatAlani" style="display:none;">
           <label>Birim Alış Fiyatı (₺, opsiyonel)</label>
@@ -613,7 +613,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Araç Çıkış Kaydı</div><button class="sheet-close" data-close="aracCikisOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Araç</label><input type="text" id="f_cikis_arac" disabled=""></div>
+        <div class="field"><label>Araç</label><input type="text" id="f_cikis_arac" disabled></div>
         <div class="field"><label>Kullanan Kişi *</label><input type="text" id="f_cikis_kullanan" placeholder="Ad Soyad"></div>
         <div class="field"><label>Başlangıç Yeri *</label><input type="text" id="f_cikis_baslangic" placeholder="örn. Depo / Merkez Ofis"></div>
         <div class="field"><label>Gidilecek Yer *</label><input type="text" id="f_cikis_yer" placeholder="örn. Müşteri X - Ataşehir"></div>
@@ -644,7 +644,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
       <div class="sheet-handle"></div>
       <div class="sheet-header"><div class="sheet-title">Yakıt Alım Kaydı</div><button class="sheet-close" data-close="yakitAlimOverlay">✕</button></div>
       <div class="sheet-content">
-        <div class="field"><label>Araç</label><input type="text" id="f_yakit_arac" disabled=""></div>
+        <div class="field"><label>Araç</label><input type="text" id="f_yakit_arac" disabled></div>
         <div style="display:flex;gap:10px;">
           <div class="field" style="flex:1;"><label>Litre *</label><input type="number" id="f_yakit_litre" min="0" step="0.01" placeholder="örn. 45.5"></div>
           <div class="field" style="flex:1;"><label>KM *</label><input type="number" id="f_yakit_km" min="0"></div>
@@ -842,7 +842,7 @@ body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-seri
   </div>
 
   <div class="toast" id="toast"></div>
-  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src="file:///C:/Users/enter/Downloads/index_40.html"></div>
+  <div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose">✕</button><img id="lightboxImg" src=""></div>
 </div>
 
 <script>
@@ -3338,6 +3338,5 @@ document.getElementById('submitMalzeme').addEventListener('click', async ()=>{
   }
 })();
 </script>
-
-
-</body></html>
+</body>
+</html>
